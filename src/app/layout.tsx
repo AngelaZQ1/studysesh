@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
 import { UserProvider } from "@auth0/nextjs-auth0/client";
 import "./globals.css";
 import "@mantine/core/styles.css";
@@ -8,16 +7,8 @@ import {
   MantineProvider,
   mantineHtmlProps,
 } from "@mantine/core";
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
+import { emotionTransform, MantineEmotionProvider } from "@mantine/emotion";
+import { RootStyleRegistry } from "./EmotionRootStyleRegistry";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -34,11 +25,17 @@ export default function RootLayout({
       <head>
         <ColorSchemeScript />
       </head>
-      <UserProvider>
-        <MantineProvider>
-          <body>{children}</body>
-        </MantineProvider>
-      </UserProvider>
+      <body>
+        <UserProvider>
+          <RootStyleRegistry>
+            <MantineEmotionProvider>
+              <MantineProvider stylesTransform={emotionTransform}>
+                {children}
+              </MantineProvider>
+            </MantineEmotionProvider>
+          </RootStyleRegistry>
+        </UserProvider>
+      </body>
     </html>
   );
 }
