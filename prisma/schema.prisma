@@ -14,23 +14,23 @@ datasource db {
 }
 
 model User {
-  id                    Int       @id @default(autoincrement())
-  username              String    @unique
-  email                 String    @unique
-  password              String
-  sessions              Session[]
+  id                  Int    @id @default(autoincrement())
+  username            String @unique @db.VarChar(255)
+  email               String @unique
+  password            String
+  seshes              Sesh[]
   // Inverse relation for the participants
-  sessionsAsParticipant Session[] @relation("SessionParticipants")
+  seshesAsParticipant Sesh[] @relation("SeshParticipants")
 }
 
-model Session {
+model Sesh {
   id           Int      @id @default(autoincrement())
-  name         String 
+  name         String
   date         DateTime
   time         String
   location     String
   virtual      Boolean
   ownerId      Int
   owner        User     @relation(fields: [ownerId], references: [id])
-  participants User[]   @relation("SessionParticipants")
+  participants User[]   @relation("SeshParticipants")
 }
