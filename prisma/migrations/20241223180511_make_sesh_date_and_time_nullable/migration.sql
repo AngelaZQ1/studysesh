@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE "Sesh" ALTER COLUMN "time" DROP NOT NULL,
+ALTER COLUMN "location" DROP NOT NULL;

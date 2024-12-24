@@ -6,26 +6,29 @@ export async function POST(request: Request) {
     const body = await request.json();
     const { name, date, time, location, virtual, ownerId } = body;
 
-    if (!name || !date || !time || !location || virtual === undefined || !ownerId) {
-      return NextResponse.json({ error: "All fields are required." }, { status: 400 });
+    if (!name || !ownerId) {
+      return NextResponse.json({ error: "Name and ownerId are required." }, { status: 400 });
     }
 
-    const ownerExists = await prisma.user.findUnique({
+    const owner = await prisma.user.findUnique({
       where: { id: ownerId },
-    });
+    })
     
-    if (!ownerExists) {
+    if (!owner) {
       return NextResponse.json({ error: "Owner not found." }, { status: 400 });
     }
+;
     
     const newSesh = await prisma.sesh.create({
       data: {
         name,
         date: new Date(date),
-        time,
-        location,
+        time: time || null,
+        location: location || null,
         virtual,
-        ownerId,
+        owner: {
+          connect: { id: ownerId },
+        },
       },
     });
 

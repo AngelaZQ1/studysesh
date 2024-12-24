@@ -1,11 +1,17 @@
+"use client";
 import { Card, Text, Button, Group, Stack } from "@mantine/core";
-import SeshCalendar from "./_components/seshCalendar";
+import { useDisclosure } from "@mantine/hooks";
+import NewSeshModal from "./_components/NewSeshModal";
+import SeshCalendar from "./_components/SeshCalendar";
 
 export default function Page() {
+  const [opened, { open, close }] = useDisclosure(false);
+
   return (
     <Stack p={30} h="100vh" gap={30}>
       <Group grow align="stretch" h={200}>
         <Button
+          onClick={open}
           h="inherit"
           variant="gradient"
           gradient={{ from: "#FF9C67", to: "#FC6288", deg: 115 }}
@@ -25,6 +31,8 @@ export default function Page() {
       </Group>
 
       <SeshCalendar />
+
+      <NewSeshModal opened={opened} onClose={close} />
     </Stack>
   );
 }

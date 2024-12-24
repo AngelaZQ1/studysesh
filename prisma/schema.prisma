@@ -27,8 +27,8 @@ model Sesh {
   id           Int      @id @default(autoincrement())
   name         String
   date         DateTime
-  time         String
-  location     String
+  time         String?
+  location     String?
   virtual      Boolean
   ownerId      Int
   owner        User     @relation(fields: [ownerId], references: [id])
