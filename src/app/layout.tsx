@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { UserProvider } from "@auth0/nextjs-auth0/client";
 import { Notifications } from "@mantine/notifications";
 import "./globals.css";
 import "@mantine/core/styles.css";
@@ -30,16 +29,14 @@ export default function RootLayout({
         <ColorSchemeScript />
       </head>
       <body>
-        <UserProvider>
-          <RootStyleRegistry>
-            <MantineEmotionProvider>
-              <MantineProvider stylesTransform={emotionTransform}>
-                <Notifications />
-                {children}
-              </MantineProvider>
-            </MantineEmotionProvider>
-          </RootStyleRegistry>
-        </UserProvider>
+        <RootStyleRegistry>
+          <MantineEmotionProvider>
+            <MantineProvider stylesTransform={emotionTransform}>
+              <Notifications />
+              {children}
+            </MantineProvider>
+          </MantineEmotionProvider>
+        </RootStyleRegistry>
       </body>
     </html>
   );
