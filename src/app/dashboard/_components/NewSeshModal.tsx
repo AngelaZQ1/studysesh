@@ -97,7 +97,6 @@ export default function NewSeshModal({ opened, onClose }: NewSeshModalProps) {
             key={form.key("name")}
             label="Give your Sesh a name"
             placeholder="Cramming for finals"
-            radius={7}
             labelProps={{ fw: 600 }}
             {...form.getInputProps("name")}
             size="md"
@@ -154,7 +153,6 @@ export default function NewSeshModal({ opened, onClose }: NewSeshModalProps) {
                   key={form.key("locationString")}
                   placeholder="Snell Library Colab G"
                   disabled={form.getValues().location === "virtually"}
-                  radius={7}
                   leftSectionPointerEvents="none"
                   leftSection={<FiMapPin />}
                   size="md"
