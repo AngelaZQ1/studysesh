@@ -11,9 +11,15 @@ import {
   Anchor,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
+import { createUserWithEmailAndPassword } from "firebase/auth";
 import React from "react";
+import { auth } from "../../../firebase";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { notifications } from "@mantine/notifications";
 
 export default function Page() {
+  const router = useRouter();
   const form = useForm({
     initialValues: {
       first: "",
@@ -33,7 +39,12 @@ export default function Page() {
           : /^\S+@\S+$/.test(value)
           ? null
           : "Invalid email",
-      password: (value) => (!value ? "Password is required" : null),
+      password: (value) =>
+        !value
+          ? "Password is required"
+          : value.length < 6
+          ? "Password must be at least 6 characters long"
+          : null,
       confirmPassword: (value): string | null =>
         !value
           ? "Confirm password is required"
@@ -42,6 +53,44 @@ export default function Page() {
           : null,
     },
   });
+
+  const handleSubmit = (values: {
+    first: string;
+    last: string;
+    email: any;
+    password: any;
+  }) => {
+    createUserWithEmailAndPassword(auth, values.email, values.password)
+      .then(async (userCredential) => {
+        const user = userCredential.user;
+        console.log("Firebase user created:", user);
+
+        const requestBody = {
+          firebaseUid: user.uid,
+          firstName: values.first,
+          lastName: values.last,
+          email: values.email,
+        };
+
+        const res = await fetch("/api/user", {
+          method: "POST",
+          body: JSON.stringify({ ...requestBody }),
+        });
+
+        router.push("/dashboard");
+
+        notifications.show({
+          title: "Success!",
+          message: "Account successfully created. Welcome!",
+          autoClose: 3000,
+          color: "pink",
+        });
+      })
+      .catch((error) => {
+        console.log("Firebase error:", error);
+      });
+  };
+
   return (
     <Center
       h="100vh"
@@ -51,7 +100,7 @@ export default function Page() {
       }}
     >
       <Card shadow="lg" padding="xl" py={50}>
-        <form onSubmit={form.onSubmit((values) => console.log(values))}>
+        <form onSubmit={form.onSubmit((values) => handleSubmit(values))}>
           <Stack>
             <Title order={1} ta="center">
               Hi there!
@@ -103,9 +152,11 @@ export default function Page() {
             </Button>
             <Text size="sm" ta="center">
               Already have an account?{" "}
-              <Anchor href="/login" c="black" underline="always">
-                Log in here
-              </Anchor>
+              <Link href="/login">
+                <Anchor c="black" underline="always">
+                  Log in here
+                </Anchor>
+              </Link>
             </Text>
           </Stack>
         </form>

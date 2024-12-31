@@ -10,9 +10,14 @@ import {
   Anchor,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
+import { signInWithEmailAndPassword } from "firebase/auth";
 import React from "react";
+import { auth } from "../../../firebase";
+import { useRouter } from "next/navigation";
+import { notifications } from "@mantine/notifications";
 
 export default function Page() {
+  const router = useRouter();
   const form = useForm({
     initialValues: {
       email: "",
@@ -28,6 +33,30 @@ export default function Page() {
       password: (value) => (!value ? "Password is required" : null),
     },
   });
+
+  const handleSubmit = (values: { email: any; password: any }) => {
+    signInWithEmailAndPassword(auth, values.email, values.password)
+      .then(() => {
+        router.push("/dashboard");
+      })
+      .catch((error) => {
+        console.log("Firebase error:", error);
+        if (error.code === "auth/invalid-credential") {
+          form.setErrors({
+            email: "Invalid email or password",
+            password: "Invalid email or password",
+          });
+        } else {
+          notifications.show({
+            title: "Error",
+            message: "An unknown firebase error occurred.",
+            autoClose: 5000,
+            color: "red",
+          });
+        }
+      });
+  };
+
   return (
     <Center
       h="100vh"
@@ -37,7 +66,7 @@ export default function Page() {
       }}
     >
       <Card shadow="lg" padding="xl" w="450" py={50}>
-        <form onSubmit={form.onSubmit((values) => console.log(values))}>
+        <form onSubmit={form.onSubmit((values) => handleSubmit(values))}>
           <Stack>
             <Title order={1} ta="center">
               Welcome back!
