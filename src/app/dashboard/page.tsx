@@ -6,20 +6,21 @@ import SeshCalendar from "./_components/SeshCalendar";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "../../../firebase";
 import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 export default function Page() {
   const router = useRouter();
   const [opened, { open, close }] = useDisclosure(false);
 
-  onAuthStateChanged(auth, (user) => {
-    if (!user) {
-      router.push("/login");
-    }
-  });
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (!user) {
+        router.push("/login");
+      }
+    });
 
-  if (!auth.currentUser) {
-    return null;
-  }
+    return () => unsubscribe();
+  }, [router]);
 
   return (
     <Stack p={30} h="100vh" gap={30}>
