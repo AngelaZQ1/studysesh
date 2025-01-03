@@ -134,11 +134,11 @@ export default function NewSeshModal({ opened, onClose }: NewSeshModalProps) {
             placeholder="Cramming for finals"
             labelProps={{ fw: 600 }}
             {...form.getInputProps("title")}
-            size="md"
+            size="sm"
             withAsterisk
           />
           <Box>
-            <Text size="md" fw={600}>
+            <Text size="sm" fw={600}>
               When? <span style={{ color: "red" }}>*</span>
             </Text>
             <DatePicker
@@ -146,7 +146,7 @@ export default function NewSeshModal({ opened, onClose }: NewSeshModalProps) {
               {...form.getInputProps("date")}
               firstDayOfWeek={0}
               numberOfColumns={2}
-              size="md"
+              size="sm"
               minDate={new Date()}
               highlightToday
               allowDeselect
@@ -156,22 +156,21 @@ export default function NewSeshModal({ opened, onClose }: NewSeshModalProps) {
                 {form.errors.date}
               </Text>
             )}
-          </Box>
 
-          <Box>
-            <Text size="md" fw={600}>
+            <Text size="sm" fw={600} mt="sm">
               What time?
             </Text>
             <TimeInput
               key={form.key("time")}
               {...form.getInputProps("time")}
-              size="md"
+              size="sm"
             />
           </Box>
+
           <Radio.Group
             label="Where is the Sesh happening?"
             labelProps={{ fw: 600 }}
-            size="md"
+            size="sm"
             {...form.getInputProps("location")}
             withAsterisk
           >
@@ -180,10 +179,10 @@ export default function NewSeshModal({ opened, onClose }: NewSeshModalProps) {
                 value="virtual"
                 label="Virtual"
                 color="#FC6288"
-                size="md"
+                size="sm"
               />
               <Flex align="center" gap="sm">
-                <Radio value="inPerson" color="#FC6288" size="md" />
+                <Radio value="inPerson" color="#FC6288" size="sm" />
                 <TextInput
                   label="In person"
                   key={form.key("locationString")}
@@ -191,7 +190,7 @@ export default function NewSeshModal({ opened, onClose }: NewSeshModalProps) {
                   disabled={form.getValues().location === "virtual"}
                   leftSectionPointerEvents="none"
                   leftSection={<FiMapPin />}
-                  size="md"
+                  size="sm"
                   {...form.getInputProps("locationString")}
                 />
               </Flex>
