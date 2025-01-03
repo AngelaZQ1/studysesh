@@ -1,3 +1,4 @@
+"use client";
 import { Notifications } from "@mantine/notifications";
 import "./globals.css";
 import "@mantine/core/styles.css";
@@ -5,13 +6,21 @@ import "@mantine/dates/styles.css";
 import "@mantine/notifications/styles.css";
 
 import {
+  Center,
   ColorSchemeScript,
+  Flex,
+  Loader,
   MantineProvider,
   createTheme,
   mantineHtmlProps,
 } from "@mantine/core";
 import { emotionTransform, MantineEmotionProvider } from "@mantine/emotion";
 import { RootStyleRegistry } from "./EmotionRootStyleRegistry";
+import UserContext from "./_contexts/UserContext";
+import { useEffect, useState } from "react";
+import { User, onAuthStateChanged } from "firebase/auth";
+import { auth } from "../../firebase";
+import useUser from "./_hooks/useUser";
 
 const theme = createTheme({
   components: {
@@ -34,6 +43,25 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const { getUser } = useUser();
+  const [firebaseUser, setCurrentUser] = useState<User | null>(null);
+  const [userId, setUserId] = useState<number | null>(null);
+  const [idToken, setIdToken] = useState<string | null>("");
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    onAuthStateChanged(auth, async (firebaseUser) => {
+      setCurrentUser(firebaseUser);
+
+      const idToken = firebaseUser ? await firebaseUser.getIdToken(true) : "";
+      setIdToken(idToken);
+
+      const user = await getUser({ firebaseUid: firebaseUser.uid });
+      setUserId(user.id);
+      setLoading(false);
+    });
+  }, [getUser]);
+
   return (
     <html lang="en" {...mantineHtmlProps}>
       <head>
@@ -44,7 +72,18 @@ export default function RootLayout({
           <MantineEmotionProvider>
             <MantineProvider stylesTransform={emotionTransform} theme={theme}>
               <Notifications />
-              {children}
+              {loading ? (
+                <Flex h="100vh" align="center" justify="center">
+                  <Center mt={10}>
+                    <Loader mr={10} size="xs" />
+                    Loading...
+                  </Center>
+                </Flex>
+              ) : (
+                <UserContext.Provider value={{ firebaseUser, userId, idToken }}>
+                  {children}
+                </UserContext.Provider>
+              )}
             </MantineProvider>
           </MantineEmotionProvider>
         </RootStyleRegistry>

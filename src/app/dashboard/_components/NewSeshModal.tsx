@@ -15,6 +15,8 @@ import { notifications } from "@mantine/notifications";
 import { DatePicker, TimeInput } from "@mantine/dates";
 import { Radio } from "@mantine/core";
 import { FiMapPin } from "react-icons/fi";
+import useUserContext from "@/app/_hooks/useUserContext";
+import useSesh from "@/app/_hooks/useSesh";
 
 interface NewSeshModalProps {
   opened: boolean;
@@ -22,16 +24,22 @@ interface NewSeshModalProps {
 }
 
 export default function NewSeshModal({ opened, onClose }: NewSeshModalProps) {
+  const { idToken } = useUserContext();
+  const { createSesh } = useSesh();
+
+  // title, date, location are required
+  // if location is inPerson, locationString is required
   const form = useForm({
     initialValues: {
-      name: "",
-      date: null,
-      time: null,
+      title: "",
+      date: new Date(),
+      time: undefined,
       locationString: "",
-      location: "virtually",
+      location: "virtual",
     },
     validate: {
-      name: (value) => (value.trim().length === 0 ? "Name is required" : null),
+      title: (value) =>
+        value.trim().length === 0 ? "Title is required" : null,
       date: (value) => (!value ? "Date is required" : null),
       locationString: (value): string | null =>
         form.getValues().location === "inPerson" && value.trim().length === 0
@@ -47,28 +55,18 @@ export default function NewSeshModal({ opened, onClose }: NewSeshModalProps) {
   };
 
   const handleSubmit = async (values: {
-    name: string;
-    date?: null;
-    time?: null;
-    location?: any;
-    locationString?: any;
+    title: string;
+    date: Date; // form only
+    time?: string; // form only
+    start?: Date; // start and end are optional because they are calculated
+    end?: Date;
+    location: "virtual" | string;
+    locationString: string; // form only
   }) => {
     form.validate();
 
-    const requestBody =
-      values.location === "virtually"
-        ? { ...values, virtual: true, location: null, locationString: null }
-        : {
-            ...values,
-            virtual: false,
-            location: values.locationString,
-            locationString: null,
-          };
-
-    const res = await fetch("/api/sesh", {
-      method: "POST",
-      body: JSON.stringify({ ...requestBody, ownerId: 1 }), // TODO remove ownerID
-    });
+    const requestBody = getRequestBody(values);
+    createSesh(requestBody);
 
     notifications.show({
       title: "Success!",
@@ -77,6 +75,43 @@ export default function NewSeshModal({ opened, onClose }: NewSeshModalProps) {
       color: "pink",
     });
     handleClose();
+  };
+
+  const getRequestBody = (values: {
+    title: string;
+    date: Date;
+    time?: string;
+    start?: Date;
+    end?: Date;
+    location: "virtual" | string;
+    locationString: string;
+  }) => {
+    const isVirtual = values.location === "virtual";
+    const location = isVirtual ? null : values.locationString;
+
+    // if time is provided, combine date and time for start
+    const start = values.time
+      ? new Date(
+          values.date.getFullYear(),
+          values.date.getMonth(),
+          values.date.getDate(),
+          ...values.time.split(":").map(Number)
+        )
+      : values.date;
+
+    const end = new Date(start);
+    end.setHours(end.getHours() + 1);
+
+    const requestBody = {
+      title: values.title,
+      start,
+      end,
+      location,
+      virtual: isVirtual,
+      idToken,
+    };
+
+    return requestBody;
   };
 
   return (
@@ -94,11 +129,11 @@ export default function NewSeshModal({ opened, onClose }: NewSeshModalProps) {
       <form onSubmit={form.onSubmit((values) => handleSubmit(values))}>
         <Stack gap="xl">
           <TextInput
-            key={form.key("name")}
-            label="Give your Sesh a name"
+            key={form.key("title")}
+            label="Give your Sesh a title"
             placeholder="Cramming for finals"
             labelProps={{ fw: 600 }}
-            {...form.getInputProps("name")}
+            {...form.getInputProps("title")}
             size="md"
             withAsterisk
           />
@@ -138,11 +173,12 @@ export default function NewSeshModal({ opened, onClose }: NewSeshModalProps) {
             labelProps={{ fw: 600 }}
             size="md"
             {...form.getInputProps("location")}
+            withAsterisk
           >
             <Stack mt="md">
               <Radio
-                value="virtually"
-                label="Virtually"
+                value="virtual"
+                label="Virtual"
                 color="#FC6288"
                 size="md"
               />
@@ -152,7 +188,7 @@ export default function NewSeshModal({ opened, onClose }: NewSeshModalProps) {
                   label="In person"
                   key={form.key("locationString")}
                   placeholder="Snell Library Colab G"
-                  disabled={form.getValues().location === "virtually"}
+                  disabled={form.getValues().location === "virtual"}
                   leftSectionPointerEvents="none"
                   leftSection={<FiMapPin />}
                   size="md"

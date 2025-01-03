@@ -10,11 +10,11 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = "postgresql://angela:123123@localhost:5432/study_sesh"
+  url      = env("DATABASE_URL")
 }
 
 model User {
-  firebaseUid         String  @unique // Firebase UID to link Firebase Auth to this user
+  firebaseUid         String @unique // Firebase UID to link Firebase Auth to this user
   id                  Int    @id @default(autoincrement())
   firstName           String
   lastName            String
@@ -25,13 +25,13 @@ model User {
 }
 
 model Sesh {
-  id           Int      @id @default(autoincrement())
-  name         String
-  date         DateTime
-  time         String?
+  id           Int       @id @default(autoincrement())
+  title        String
+  start        DateTime?
+  end          DateTime?
   location     String?
   virtual      Boolean
   ownerId      Int
-  owner        User     @relation(fields: [ownerId], references: [id])
-  participants User[]   @relation("SeshParticipants")
+  owner        User      @relation(fields: [ownerId], references: [id])
+  participants User[]    @relation("SeshParticipants")
 }
