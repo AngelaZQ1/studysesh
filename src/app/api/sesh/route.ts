@@ -77,7 +77,7 @@ export async function GET(request: Request) {
       const decodedToken = await authAdmin.verifyIdToken(idToken);
       const uid = decodedToken.uid;
 
-      const ownerId = await prisma.user
+      const userId = await prisma.user
         .findUnique({ where: { firebaseUid: uid } })
         .then((user) => {
           if (!user) throw new Error("User not found");
@@ -85,7 +85,9 @@ export async function GET(request: Request) {
         });
 
       const seshes = await prisma.sesh.findMany({
-        where: { ownerId },
+        where: {
+          OR: [{ ownerId: userId }, { participants: { some: { id: userId } } }],
+        },
       });
 
       return NextResponse.json(seshes, { status: 200 });
