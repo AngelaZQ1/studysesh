@@ -5,7 +5,13 @@ const useUser = () => {
     return user;
   };
 
-  return { getUser };
+  const getAllUsers = async () => {
+    const res = await fetch(`/api/user`, { method: "GET" });
+    const users = await res.json();
+    return users;
+  };
+
+  return { getAllUsers, getUser };
 };
 
 export default useUser;

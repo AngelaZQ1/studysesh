@@ -5,7 +5,7 @@ import { authAdmin } from "../../../../firebaseAdmin";
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { title, start, end, location, virtual } = body;
+    const { title, start, end, location, virtual, participantIds } = body;
     const idToken = request.headers.get("authorization")?.split("Bearer ")[1];
 
     if (!idToken) {
@@ -40,6 +40,9 @@ export async function POST(request: Request) {
           end,
           location: location || null,
           virtual,
+          participants: {
+            connect: participantIds.map((id: string) => ({ id })),
+          },
           owner: { connect: { id: ownerId } },
         },
       });
