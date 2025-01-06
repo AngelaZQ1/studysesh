@@ -5,7 +5,6 @@ import { User } from "firebase/auth";
 export interface UserContextType {
   firebaseUser: User;
   userId: number;
-  idToken: string;
 }
 
 const UserContext = createContext<UserContextType | null>(null);

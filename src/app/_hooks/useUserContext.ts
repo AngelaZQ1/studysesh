@@ -9,7 +9,6 @@ const useUserContext = (): UserContextType => {
   return {
     firebaseUser: context.firebaseUser,
     userId: context.userId,
-    idToken: context.idToken,
   };
 };
 

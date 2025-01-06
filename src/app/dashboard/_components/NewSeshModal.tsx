@@ -20,11 +20,21 @@ import useNewSeshModal from "@/app/_hooks/useNewSeshModal";
 interface NewSeshModalProps {
   opened: boolean;
   onClose: () => void;
+  onSubmit: () => void;
 }
 
-export default function NewSeshModal({ opened, onClose }: NewSeshModalProps) {
+export default function NewSeshModal({
+  opened,
+  onClose,
+  onSubmit,
+}: NewSeshModalProps) {
   const { handleClose, handleSubmit, form, allUsers } =
     useNewSeshModal(onClose);
+
+  const handleFormSubmit = async (values: typeof form.values) => {
+    await handleSubmit(values);
+    onSubmit();
+  };
 
   return (
     <Modal
@@ -38,7 +48,7 @@ export default function NewSeshModal({ opened, onClose }: NewSeshModalProps) {
       size="auto"
       centered
     >
-      <form onSubmit={form.onSubmit((values) => handleSubmit(values))}>
+      <form onSubmit={form.onSubmit((values) => handleFormSubmit(values))}>
         <Flex>
           <Stack gap="xl">
             <TextInput
@@ -103,8 +113,6 @@ export default function NewSeshModal({ opened, onClose }: NewSeshModalProps) {
             key={form.key("participantIds")}
             label="Add friends to your Sesh"
             placeholder="Search by name..."
-            // value={selectedUserIds}
-            // onChange={setSelectedUserIds}
             data={allUsers.map((user) => ({
               value: user.id.toString(),
               label: `${user.firstName} ${user.lastName}`,

@@ -46,15 +46,11 @@ export default function RootLayout({
   const { getUser } = useUser();
   const [firebaseUser, setCurrentUser] = useState<User | null>(null);
   const [userId, setUserId] = useState<number | null>(null);
-  const [idToken, setIdToken] = useState<string | null>("");
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     onAuthStateChanged(auth, async (firebaseUser) => {
       setCurrentUser(firebaseUser);
-
-      const idToken = firebaseUser ? await firebaseUser.getIdToken(true) : "";
-      setIdToken(idToken);
 
       const user = await getUser({ firebaseUid: firebaseUser.uid });
       setUserId(user.id);
@@ -80,7 +76,7 @@ export default function RootLayout({
                   </Center>
                 </Flex>
               ) : (
-                <UserContext.Provider value={{ firebaseUser, userId, idToken }}>
+                <UserContext.Provider value={{ firebaseUser, userId }}>
                   {children}
                 </UserContext.Provider>
               )}

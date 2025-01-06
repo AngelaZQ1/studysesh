@@ -3,9 +3,27 @@ import { Card, Text, Button, Group, Stack } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import NewSeshModal from "./_components/NewSeshModal";
 import SeshCalendar from "./_components/SeshCalendar";
+import useSesh from "../_hooks/useSesh";
+import { Sesh } from "@prisma/client";
+import { useEffect, useState } from "react";
 
 export default function Page() {
   const [opened, { open, close }] = useDisclosure(false);
+  const { getAllSeshes } = useSesh();
+  const [seshes, setSeshes] = useState<Sesh[]>([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const seshes = await getAllSeshes();
+      setSeshes(seshes);
+    };
+    fetchData();
+  }, []);
+
+  const handleSubmit = async () => {
+    const seshes = await getAllSeshes();
+    setSeshes(seshes);
+  };
 
   return (
     <Stack p={30} h="100vh" gap={30}>
@@ -24,9 +42,9 @@ export default function Page() {
         </Card>
       </Group>
 
-      <SeshCalendar />
+      <SeshCalendar seshes={seshes} />
 
-      <NewSeshModal opened={opened} onClose={close} />
+      <NewSeshModal opened={opened} onClose={close} onSubmit={handleSubmit} />
     </Stack>
   );
 }

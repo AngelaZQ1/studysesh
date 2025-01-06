@@ -27,8 +27,8 @@ model User {
 model Sesh {
   id           Int       @id @default(autoincrement())
   title        String
-  start        DateTime?
-  end          DateTime?
+  start        DateTime
+  end          DateTime
   location     String?
   virtual      Boolean
   ownerId      Int

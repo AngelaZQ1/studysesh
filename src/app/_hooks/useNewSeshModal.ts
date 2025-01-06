@@ -15,7 +15,7 @@ type User = {
 
 const useNewSeshModal = (onClose: () => void) => {
   const { getAllUsers } = useUser();
-  const { userId, idToken } = useUserContext();
+  const { firebaseUser, userId } = useUserContext();
   const { createSesh } = useSesh();
 
   const [allUsers, setAllUsers] = useState<User[]>([]);
@@ -70,7 +70,7 @@ const useNewSeshModal = (onClose: () => void) => {
   }) => {
     form.validate();
 
-    const requestBody = getRequestBody(values);
+    const requestBody = await getRequestBody(values);
     createSesh(requestBody);
 
     notifications.show({
@@ -82,7 +82,7 @@ const useNewSeshModal = (onClose: () => void) => {
     handleClose();
   };
 
-  const getRequestBody = (values: {
+  const getRequestBody = async (values: {
     title: string;
     date: Date;
     time?: string;
@@ -107,6 +107,8 @@ const useNewSeshModal = (onClose: () => void) => {
 
     const end = new Date(start);
     end.setHours(end.getHours() + 1);
+
+    const idToken = await firebaseUser.getIdToken();
 
     const requestBody = {
       title: values.title,

@@ -1,7 +1,7 @@
 import useUserContext from "./useUserContext";
 
 const useSesh = () => {
-  const { idToken } = useUserContext();
+  const { firebaseUser } = useUserContext();
 
   const createSesh = async (requestBody: {
     title: string;
@@ -11,6 +11,7 @@ const useSesh = () => {
     virtual: boolean;
     idToken: string;
   }) => {
+    const idToken = await firebaseUser.getIdToken();
     await fetch("/api/sesh", {
       method: "POST",
       body: JSON.stringify({ ...requestBody }),
@@ -20,7 +21,22 @@ const useSesh = () => {
     });
   };
 
-  return { createSesh };
+  const getAllSeshes = async () => {
+    const idToken = await firebaseUser.getIdToken();
+    try {
+      const res = await fetch(`/api/sesh`, {
+        headers: {
+          Authorization: `Bearer ${idToken}`,
+        },
+      });
+      const seshes = await res.json();
+      return seshes;
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  return { createSesh, getAllSeshes };
 };
 
 export default useSesh;
