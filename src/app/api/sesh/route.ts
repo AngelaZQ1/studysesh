@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import prisma from "../../../../prisma/client";
 import { authAdmin } from "../../../../firebaseAdmin";
+import { Sesh } from "@prisma/client";
 
 export async function POST(request: Request) {
   try {
@@ -87,10 +88,11 @@ export async function GET(request: Request) {
           return user.id;
         });
 
-      const seshes = await prisma.sesh.findMany({
+      const seshes: Sesh[] = await prisma.sesh.findMany({
         where: {
           OR: [{ ownerId: userId }, { participants: { some: { id: userId } } }],
         },
+        include: { participants: true },
       });
 
       return NextResponse.json(seshes, { status: 200 });

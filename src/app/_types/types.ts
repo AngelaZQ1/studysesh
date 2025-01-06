@@ -1,3 +1,5 @@
+import { User } from "@prisma/client";
+
 export type Event = {
   id: string;
   title: string;
@@ -6,4 +8,5 @@ export type Event = {
   location: string;
   virtual: boolean;
   ownerId: number;
+  participants: User[];
 };
