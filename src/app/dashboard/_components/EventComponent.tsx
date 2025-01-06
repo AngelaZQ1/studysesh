@@ -6,7 +6,6 @@ import { FiCalendar, FiClock, FiEdit3, FiMapPin } from "react-icons/fi";
 
 const EventComponent = ({ event }: { event: Event }) => {
   const { userId } = useUserContext();
-
   return (
     <Popover withArrow position="top" withinPortal>
       <Popover.Target>
@@ -18,7 +17,7 @@ const EventComponent = ({ event }: { event: Event }) => {
         </Text>
         <Flex align="end" mt="xs" wrap="nowrap">
           <Stack gap={4}>
-            <Flex gap={3} align="center">
+            <Flex gap={3} align="center" w="max-content">
               <FiCalendar color="gray" size={16} />
               <Text size="sm" c="gray.7" sx={{ flexShrink: "0" }}>
                 {moment(event.start).format("dddd, MMMM D")}
