@@ -16,23 +16,50 @@ import { DatePicker, TimeInput } from "@mantine/dates";
 import { Radio } from "@mantine/core";
 import { FiMapPin } from "react-icons/fi";
 import useNewSeshModal from "@/app/_hooks/useNewSeshModal";
+import { Sesh } from "@/app/_types/types";
+import { notifications } from "@mantine/notifications";
 
 interface NewSeshModalProps {
   opened: boolean;
+  seshToEdit?: Sesh | null;
   onClose: () => void;
   onSubmit: () => void;
 }
 
 export default function NewSeshModal({
   opened,
+  seshToEdit,
   onClose,
   onSubmit,
 }: NewSeshModalProps) {
-  const { handleClose, handleSubmit, form, allUsers } =
-    useNewSeshModal(onClose);
+  const {
+    handleClose,
+    handleSubmit,
+    handleUpdate,
+    form,
+    allUsers,
+    fetchUsers,
+  } = useNewSeshModal({
+    onClose,
+    seshToEdit,
+  });
 
   const handleFormSubmit = async (values: typeof form.values) => {
     await handleSubmit(values);
+    onSubmit();
+  };
+
+  const handleFormUpdate = async () => {
+    if (!seshToEdit) {
+      notifications.show({
+        title: "Error",
+        message: "An error occurred while updating the Sesh.",
+        autoClose: 3000,
+        color: "red",
+      });
+      return;
+    }
+    await handleUpdate({ ...form.values, id: seshToEdit.id });
     onSubmit();
   };
 
@@ -40,7 +67,7 @@ export default function NewSeshModal({
     <Modal
       opened={opened}
       onClose={handleClose}
-      title="Plan a Sesh"
+      title={seshToEdit ? "Edit Sesh" : "Plan a Sesh"}
       overlayProps={{
         backgroundOpacity: 0.55,
         blur: 3,
@@ -113,6 +140,7 @@ export default function NewSeshModal({
             key={form.key("participantIds")}
             label="Add friends to your Sesh"
             placeholder="Search by name..."
+            onClick={fetchUsers}
             data={allUsers.map((user) => ({
               value: user.id.toString(),
               label: `${user.firstName} ${user.lastName}`,
@@ -129,13 +157,23 @@ export default function NewSeshModal({
           <Button variant="white" c="gray.7" onClick={handleClose}>
             Cancel
           </Button>
-          <Button
-            type="submit"
-            variant="gradient"
-            gradient={{ from: "#FF9C67", to: "#FC6288", deg: 115 }}
-          >
-            Plan Sesh
-          </Button>
+          {seshToEdit ? (
+            <Button
+              onClick={handleFormUpdate}
+              variant="gradient"
+              gradient={{ from: "#FF9C67", to: "#FC6288", deg: 115 }}
+            >
+              Update Sesh
+            </Button>
+          ) : (
+            <Button
+              type="submit"
+              variant="gradient"
+              gradient={{ from: "#FF9C67", to: "#FC6288", deg: 115 }}
+            >
+              Plan Sesh
+            </Button>
+          )}
         </Group>
       </form>
     </Modal>

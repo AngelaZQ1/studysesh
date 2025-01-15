@@ -4,13 +4,15 @@ import { useDisclosure } from "@mantine/hooks";
 import NewSeshModal from "./_components/NewSeshModal";
 import SeshCalendar from "./_components/SeshCalendar";
 import useSesh from "../_hooks/useSesh";
-import { Sesh } from "@prisma/client";
 import { useEffect, useState } from "react";
+import { Sesh } from "../_types/types";
 
 export default function Page() {
   const [opened, { open, close }] = useDisclosure(false);
   const { getAllSeshes } = useSesh();
+
   const [seshes, setSeshes] = useState<Sesh[]>([]);
+  const [seshToEdit, setSeshToEdit] = useState<Sesh | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -22,7 +24,18 @@ export default function Page() {
 
   const handleSubmit = async () => {
     const seshes = await getAllSeshes();
+    setSeshToEdit(null);
     setSeshes(seshes);
+  };
+
+  const handleEditSesh = (sesh: Sesh) => {
+    setSeshToEdit(sesh);
+    open();
+  };
+
+  const handleClose = () => {
+    setSeshToEdit(null);
+    close();
   };
 
   return (
@@ -42,9 +55,14 @@ export default function Page() {
         </Card>
       </Group>
 
-      <SeshCalendar seshes={seshes} />
+      <SeshCalendar seshes={seshes} handleEdit={handleEditSesh} />
 
-      <NewSeshModal opened={opened} onClose={close} onSubmit={handleSubmit} />
+      <NewSeshModal
+        opened={opened}
+        onClose={handleClose}
+        onSubmit={handleSubmit}
+        seshToEdit={seshToEdit}
+      />
     </Stack>
   );
 }

@@ -1,15 +1,22 @@
 import useUserContext from "@/app/_hooks/useUserContext";
-import { Event } from "@/app/_types/types";
+import { Sesh } from "@/app/_types/types";
 import { Popover, Text, Box, Stack, Flex, Button } from "@mantine/core";
 import moment from "moment";
 import { FiCalendar, FiClock, FiEdit3, FiMapPin } from "react-icons/fi";
 import { PiUsersBold } from "react-icons/pi";
 
-const EventComponent = ({ event }: { event: Event }) => {
+const EventComponent = ({
+  event,
+  handleEdit,
+}: {
+  event: Sesh;
+  handleEdit: (sesh: Sesh) => void;
+}) => {
   const { userId } = useUserContext();
   const participantsString = event.participants
     .map((p) => `${p.firstName} ${p.lastName}`)
     .join(", ");
+
   return (
     <Popover withArrow position="top" withinPortal>
       <Popover.Target>
@@ -27,12 +34,14 @@ const EventComponent = ({ event }: { event: Event }) => {
                 {moment(event.start).format("dddd, MMMM D")}
               </Text>
             </Flex>
-            <Flex gap={3} align="center">
-              <FiClock color="gray" size={16} />
-              <Text size="sm" c="gray.7">
-                {moment(event.start).format("h:mma")}
-              </Text>
-            </Flex>
+            {event.time && (
+              <Flex gap={3} align="center">
+                <FiClock color="gray" size={16} />
+                <Text size="sm" c="gray.7">
+                  {moment(event.time, "HH:mm").format("h:mmA")}
+                </Text>
+              </Flex>
+            )}
             <Flex gap={3} align="center">
               <FiMapPin color="gray" size={16} style={{ flexShrink: "0" }} />
               <Text size="sm" c="gray.7">
@@ -56,6 +65,7 @@ const EventComponent = ({ event }: { event: Event }) => {
           {event.ownerId === userId ? (
             <Button
               variant="outline"
+              onClick={() => handleEdit(event)}
               color="gray.5"
               c="gray.6"
               size="xs"

@@ -29,6 +29,7 @@ model Sesh {
   title        String
   start        DateTime
   end          DateTime
+  time         String?
   location     String?
   virtual      Boolean
   ownerId      Int
