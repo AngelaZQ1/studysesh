@@ -2,7 +2,7 @@
 import { Card, Text, Button, Group, Stack } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import NewSeshModal from "./_components/NewSeshModal";
-// import SeshCalendar from "./_components/SeshCalendar";
+import SeshCalendar from "./_components/SeshCalendar";
 import useSesh from "../_hooks/useSesh";
 import { useEffect, useState } from "react";
 import { Sesh } from "../_types/types";
@@ -55,7 +55,7 @@ export default function Page() {
         </Card>
       </Group>
 
-      {/* <SeshCalendar seshes={seshes} handleEdit={handleEditSesh} /> */}
+      <SeshCalendar seshes={seshes} handleEdit={handleEditSesh} />
 
       <NewSeshModal
         opened={opened}
