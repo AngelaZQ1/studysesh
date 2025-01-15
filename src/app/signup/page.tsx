@@ -57,8 +57,8 @@ export default function Page() {
   const handleSubmit = (values: {
     first: string;
     last: string;
-    email: any;
-    password: any;
+    email: string;
+    password: string;
   }) => {
     createUserWithEmailAndPassword(auth, values.email, values.password)
       .then(async (userCredential) => {
@@ -72,7 +72,7 @@ export default function Page() {
           email: values.email,
         };
 
-        const res = await fetch("/api/user", {
+        await fetch("/api/user", {
           method: "POST",
           body: JSON.stringify({ ...requestBody }),
         });
@@ -82,7 +82,7 @@ export default function Page() {
         notifications.show({
           title: "Success!",
           message: "Account successfully created. Welcome!",
-          autoClose: 3000,
+          autoClose: 5000,
           color: "pink",
         });
       })

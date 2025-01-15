@@ -2,11 +2,12 @@
 import {
   Box,
   Button,
+  Center,
   Divider,
   Flex,
-  Group,
   Modal,
   MultiSelect,
+  Popover,
   Stack,
   Text,
   TextInput,
@@ -18,29 +19,31 @@ import { FiMapPin } from "react-icons/fi";
 import useNewSeshModal from "@/app/_hooks/useNewSeshModal";
 import { Sesh } from "@/app/_types/types";
 import { notifications } from "@mantine/notifications";
+import { LuCalendarX2 } from "react-icons/lu";
 
 interface NewSeshModalProps {
   opened: boolean;
   seshToEdit?: Sesh | null;
-  onClose: () => void;
   onSubmit: () => void;
 }
 
 export default function NewSeshModal({
   opened,
   seshToEdit,
-  onClose,
   onSubmit,
 }: NewSeshModalProps) {
   const {
     handleClose,
     handleSubmit,
     handleUpdate,
+    handleCancelSesh,
+    popoverOpened,
+    setPopoverOpened,
     form,
     allUsers,
     fetchUsers,
   } = useNewSeshModal({
-    onClose,
+    onSubmit,
     seshToEdit,
   });
 
@@ -54,7 +57,7 @@ export default function NewSeshModal({
       notifications.show({
         title: "Error",
         message: "An error occurred while updating the Sesh.",
-        autoClose: 3000,
+        autoClose: 5000,
         color: "red",
       });
       return;
@@ -165,27 +168,73 @@ export default function NewSeshModal({
           />
         </Flex>
 
-        <Flex justify="flex-end" mt="xl" gap={10}>
-          <Button variant="white" c="gray.7" onClick={handleClose}>
-            Cancel
-          </Button>
-          {seshToEdit ? (
-            <Button
-              onClick={handleFormUpdate}
-              variant="gradient"
-              gradient={{ from: "#FF9C67", to: "#FC6288", deg: 115 }}
+        <Flex justify="space-between" mt="xl">
+          {seshToEdit && (
+            <Popover
+              opened={popoverOpened}
+              onChange={setPopoverOpened}
+              position="top"
+              withArrow
+              shadow="md"
             >
-              Update Sesh
-            </Button>
-          ) : (
-            <Button
-              type="submit"
-              variant="gradient"
-              gradient={{ from: "#FF9C67", to: "#FC6288", deg: 115 }}
-            >
-              Plan Sesh
-            </Button>
+              <Popover.Target>
+                <Button
+                  onClick={() => setPopoverOpened(true)}
+                  variant="subtle"
+                  color="red"
+                  leftSection={<LuCalendarX2 size={18} />}
+                >
+                  Cancel Sesh
+                </Button>
+              </Popover.Target>
+              <Popover.Dropdown>
+                <Text size="xs">
+                  Are you sure you want to cancel this Sesh?
+                </Text>
+                <Center mt="xs">
+                  <Button
+                    onClick={() => setPopoverOpened(false)}
+                    size="xs"
+                    variant="subtle"
+                    color="black"
+                    mr="xs"
+                  >
+                    Keep Sesh
+                  </Button>
+                  <Button
+                    onClick={handleCancelSesh}
+                    size="xs"
+                    variant=""
+                    color="red"
+                  >
+                    Cancel Sesh
+                  </Button>
+                </Center>
+              </Popover.Dropdown>
+            </Popover>
           )}
+          <Flex ml="auto" gap={10}>
+            <Button variant="white" c="gray.7" onClick={handleClose}>
+              Cancel
+            </Button>
+            {seshToEdit ? (
+              <Button
+                onClick={handleFormUpdate}
+                variant="gradient"
+                gradient={{ from: "#FF9C67", to: "#FC6288", deg: 115 }}
+              >
+                Update Sesh
+              </Button>
+            ) : (
+              <Button
+                type="submit"
+                variant="gradient"
+                gradient={{ from: "#FF9C67", to: "#FC6288", deg: 115 }}
+              >
+                Plan Sesh
+              </Button>
+            )}
+          </Flex>
         </Flex>
       </form>
     </Modal>

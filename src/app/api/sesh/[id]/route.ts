@@ -64,3 +64,43 @@ export async function PUT(request: Request) {
     );
   }
 }
+
+export async function DELETE(request: Request) {
+  try {
+    const id = Number(request.url.split("/").pop());
+    const idToken = request.headers.get("authorization")?.split("Bearer ")[1];
+
+    if (!idToken) {
+      return NextResponse.json({ error: "Missing idToken." }, { status: 400 });
+    }
+
+    if (!id) {
+      return NextResponse.json({ error: "Missing Sesh id." }, { status: 400 });
+    }
+
+    try {
+      authAdmin.verifyIdToken(idToken);
+
+      const deletedSesh = await prisma.sesh.delete({
+        where: {
+          id,
+        },
+      });
+
+      console.log("Sesh successfully deleted", deletedSesh);
+      return NextResponse.json(deletedSesh, { status: 201 });
+    } catch (error) {
+      console.error("Error verifying token:", error);
+      return NextResponse.json(
+        { error: "Error verifying token." },
+        { status: 401 }
+      );
+    }
+  } catch (error) {
+    console.error("Error deleting Sesh:", error);
+    return NextResponse.json(
+      { error: "Error deleting Sesh." },
+      { status: 500 }
+    );
+  }
+}

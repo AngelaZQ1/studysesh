@@ -3,6 +3,21 @@ import useUserContext from "./useUserContext";
 const useSesh = () => {
   const { firebaseUser } = useUserContext();
 
+  const getAllSeshes = async () => {
+    const idToken = await firebaseUser.getIdToken();
+    try {
+      const res = await fetch(`/api/sesh`, {
+        headers: {
+          Authorization: `Bearer ${idToken}`,
+        },
+      });
+      const seshes = await res.json();
+      return seshes;
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   const createSesh = async (requestBody: {
     title: string;
     start: Date;
@@ -44,22 +59,17 @@ const useSesh = () => {
     });
   };
 
-  const getAllSeshes = async () => {
+  const deleteSesh = async (id: number) => {
     const idToken = await firebaseUser.getIdToken();
-    try {
-      const res = await fetch(`/api/sesh`, {
-        headers: {
-          Authorization: `Bearer ${idToken}`,
-        },
-      });
-      const seshes = await res.json();
-      return seshes;
-    } catch (err) {
-      console.error(err);
-    }
+    await fetch(`/api/sesh/${id}`, {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${idToken}`,
+      },
+    });
   };
 
-  return { createSesh, updateSesh, getAllSeshes };
+  return { getAllSeshes, createSesh, updateSesh, deleteSesh };
 };
 
 export default useSesh;

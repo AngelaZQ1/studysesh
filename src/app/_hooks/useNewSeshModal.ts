@@ -16,17 +16,18 @@ type User = {
 };
 
 interface NewSeshModalProps {
-  onClose: () => void;
+  onSubmit: () => void;
   seshToEdit?: Sesh | null;
 }
 
-const useNewSeshModal = ({ onClose, seshToEdit }: NewSeshModalProps) => {
+const useNewSeshModal = ({ onSubmit, seshToEdit }: NewSeshModalProps) => {
   const { getAllUsers } = useUser();
   const { firebaseUser, userId } = useUserContext();
-  const { createSesh, updateSesh } = useSesh();
+  const { createSesh, updateSesh, deleteSesh } = useSesh();
 
   const [allUsers, setAllUsers] = useState<User[]>([]);
   const [selectedUserIds, setSelectedUserIds] = useState<string[]>([]);
+  const [popoverOpened, setPopoverOpened] = useState(false);
 
   const fetchUsers = async () => {
     const users = await getAllUsers();
@@ -84,7 +85,29 @@ const useNewSeshModal = ({ onClose, seshToEdit }: NewSeshModalProps) => {
   const handleClose = () => {
     form.reset();
     form.clearErrors();
-    onClose();
+    onSubmit();
+  };
+
+  const handleCancelSesh = async () => {
+    if (!seshToEdit) {
+      notifications.show({
+        title: "Error",
+        message: "An error occurred trying to cancel the Sesh.",
+        autoClose: 5000,
+        color: "red",
+      });
+      return;
+    }
+
+    setPopoverOpened(false);
+    await deleteSesh(Number(seshToEdit.id));
+    notifications.show({
+      title: "Success!",
+      message: "Sesh successfully cancelled.",
+      autoClose: 5000,
+      color: "pink",
+    });
+    handleClose();
   };
 
   const handleUpdate = async (values: {
@@ -106,7 +129,7 @@ const useNewSeshModal = ({ onClose, seshToEdit }: NewSeshModalProps) => {
     notifications.show({
       title: "Success!",
       message: "Your Sesh has been updated.",
-      autoClose: 3000,
+      autoClose: 5000,
       color: "pink",
     });
     handleClose();
@@ -130,7 +153,7 @@ const useNewSeshModal = ({ onClose, seshToEdit }: NewSeshModalProps) => {
     notifications.show({
       title: "Success!",
       message: "Your Sesh has been created.",
-      autoClose: 3000,
+      autoClose: 5000,
       color: "pink",
     });
     handleClose();
@@ -187,6 +210,9 @@ const useNewSeshModal = ({ onClose, seshToEdit }: NewSeshModalProps) => {
     handleClose,
     handleSubmit,
     handleUpdate,
+    handleCancelSesh,
+    popoverOpened,
+    setPopoverOpened,
     form,
     allUsers,
     selectedUserIds,

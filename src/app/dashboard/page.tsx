@@ -26,16 +26,12 @@ export default function Page() {
     const seshes = await getAllSeshes();
     setSeshToEdit(null);
     setSeshes(seshes);
+    close();
   };
 
   const handleEditSesh = (sesh: Sesh) => {
     setSeshToEdit(sesh);
     open();
-  };
-
-  const handleClose = () => {
-    setSeshToEdit(null);
-    close();
   };
 
   return (
@@ -59,7 +55,6 @@ export default function Page() {
 
       <NewSeshModal
         opened={opened}
-        onClose={handleClose}
         onSubmit={handleSubmit}
         seshToEdit={seshToEdit}
       />
