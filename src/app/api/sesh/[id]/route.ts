@@ -41,7 +41,10 @@ export async function PUT(request: Request) {
           location: location || null,
           virtual,
           participants: {
-            connect: participantIds.map((id: string) => ({ id })),
+            set: [],
+            connect: participantIds.map((participantId: string) => ({
+              id: participantId,
+            })),
           },
           owner: { connect: { id: ownerId } },
         },
