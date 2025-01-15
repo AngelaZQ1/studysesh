@@ -80,46 +80,55 @@ export default function NewSeshModal({
           <Stack gap="xl">
             <TextInput
               key={form.key("title")}
-              label="Give your Sesh a title"
+              label="Title"
               placeholder="Cramming for finals"
               labelProps={{ fw: 600 }}
               {...form.getInputProps("title")}
+              size="xs"
               withAsterisk
             />
             <Box>
-              <Text size="sm" fw={600}>
-                Pick a date <span style={{ color: "red" }}>*</span>
+              <Text size="xs" fw={600}>
+                Date <span style={{ color: "red" }}>*</span>
               </Text>
               <DatePicker
                 key={form.key("date")}
                 {...form.getInputProps("date")}
                 firstDayOfWeek={0}
                 numberOfColumns={2}
+                size="xs"
                 minDate={new Date()}
                 highlightToday
                 allowDeselect
               />
               {form.errors.date && <Text c="red">{form.errors.date}</Text>}
 
-              <Text size="sm" fw={600} mt="sm">
-                What time?
+              <Text size="xs" fw={600} mt="sm">
+                Time
               </Text>
               <TimeInput
                 key={form.key("time")}
+                size="xs"
                 {...form.getInputProps("time")}
               />
             </Box>
 
             <Radio.Group
-              label="Where is the Sesh happening?"
+              label="Location"
+              size="xs"
               labelProps={{ fw: 600 }}
               {...form.getInputProps("location")}
               withAsterisk
             >
-              <Stack mt="md">
-                <Radio value="virtual" label="Virtual" color="#FC6288" />
+              <Stack mt="md" gap="xs">
+                <Radio
+                  value="virtual"
+                  label="Virtual"
+                  color="#FC6288"
+                  size="xs"
+                />
                 <Flex align="center" gap="sm">
-                  <Radio value="inPerson" color="#FC6288" />
+                  <Radio value="inPerson" color="#FC6288" size="xs" />
                   <TextInput
                     label="In person"
                     key={form.key("locationString")}
@@ -127,6 +136,8 @@ export default function NewSeshModal({
                     disabled={form.getValues().location === "virtual"}
                     leftSectionPointerEvents="none"
                     leftSection={<FiMapPin />}
+                    sx={{ label: { fontWeight: 400 } }}
+                    size="xs"
                     {...form.getInputProps("locationString")}
                   />
                 </Flex>
@@ -138,7 +149,8 @@ export default function NewSeshModal({
 
           <MultiSelect
             key={form.key("participantIds")}
-            label="Add friends to your Sesh"
+            label="Participants"
+            size="xs"
             placeholder="Search by name..."
             onClick={fetchUsers}
             data={allUsers.map((user) => ({
@@ -153,7 +165,7 @@ export default function NewSeshModal({
           />
         </Flex>
 
-        <Group justify="flex-end" mt="xl" gap={10}>
+        <Flex justify="flex-end" mt="xl" gap={10}>
           <Button variant="white" c="gray.7" onClick={handleClose}>
             Cancel
           </Button>
@@ -174,7 +186,7 @@ export default function NewSeshModal({
               Plan Sesh
             </Button>
           )}
-        </Group>
+        </Flex>
       </form>
     </Modal>
   );
