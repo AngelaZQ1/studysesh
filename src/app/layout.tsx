@@ -21,6 +21,7 @@ import { useEffect, useState } from "react";
 import { User, onAuthStateChanged } from "firebase/auth";
 import { auth } from "../../firebase";
 import useUser from "./_hooks/useUser";
+import { useRouter } from "next/navigation";
 
 const theme = createTheme({
   components: {
@@ -44,20 +45,24 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   const { getUser } = useUser();
+  const router = useRouter();
   const [firebaseUser, setCurrentUser] = useState<User | null>(null);
   const [userId, setUserId] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     onAuthStateChanged(auth, async (firebaseUser) => {
-      setCurrentUser(firebaseUser);
+      if (!firebaseUser) {
+        router.push("/login");
+      } else {
+        setCurrentUser(firebaseUser);
 
-      const user = await getUser({ firebaseUid: firebaseUser.uid });
-      setUserId(user.id);
+        const user = await getUser({ firebaseUid: firebaseUser.uid });
+        setUserId(user.id);
+      }
       setLoading(false);
     });
   }, [getUser]);
-
   return (
     <html lang="en" {...mantineHtmlProps}>
       <head>
