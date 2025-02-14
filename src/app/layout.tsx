@@ -21,7 +21,8 @@ import { useEffect, useState } from "react";
 import { User, onAuthStateChanged } from "firebase/auth";
 import { auth } from "../../firebase";
 import useUser from "./_hooks/useUser";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+import NavBar from "./_components/NavBar";
 
 const theme = createTheme({
   components: {
@@ -46,6 +47,9 @@ export default function RootLayout({
 }>) {
   const { getUser } = useUser();
   const router = useRouter();
+  const pathname = usePathname();
+  const noNavRoutes = ["/login", "/signup"];
+
   const [firebaseUser, setCurrentUser] = useState<User | null>(null);
   const [userId, setUserId] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
@@ -63,6 +67,7 @@ export default function RootLayout({
       setLoading(false);
     });
   }, [getUser]);
+
   return (
     <html lang="en" {...mantineHtmlProps}>
       <head>
@@ -82,6 +87,7 @@ export default function RootLayout({
                 </Flex>
               ) : (
                 <UserContext.Provider value={{ firebaseUser, userId }}>
+                  {!noNavRoutes.includes(pathname) && <NavBar />}
                   {children}
                 </UserContext.Provider>
               )}
