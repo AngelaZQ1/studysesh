@@ -40,6 +40,12 @@ export default function NavBar() {
         });
       })
       .catch((error) => {
+        notifications.show({
+          title: "Error",
+          message: "An unknown error occurred while trying to sign out.",
+          autoClose: 5000,
+          color: "red",
+        });
         console.log("sign out error", error);
       });
   };
