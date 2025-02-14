@@ -97,7 +97,7 @@ export default function Page() {
               Log in
             </Button>
             <Text size="sm" ta="center" mt={10}>
-              Don't have an account?{" "}
+              Don&apos;t have an account?{" "}
               <Anchor href="/signup/" underline="always" c="black">
                 Sign up here
               </Anchor>
