@@ -39,11 +39,13 @@ export default function Page() {
           : /^\S+@\S+$/.test(value)
           ? null
           : "Invalid email",
-      password: (value) =>
+      password: (value): string | null =>
         !value
           ? "Password is required"
           : value.length < 6
           ? "Password must be at least 6 characters long"
+          : value !== form.values.confirmPassword
+          ? "Passwords do not match"
           : null,
       confirmPassword: (value): string | null =>
         !value
@@ -88,6 +90,14 @@ export default function Page() {
       })
       .catch((error) => {
         console.log("Firebase error:", error);
+        if (error.code === "auth/email-already-in-use") {
+          notifications.show({
+            title: "Error",
+            message: "Email already in use. Try logging in instead.",
+            autoClose: 5000,
+            color: "red",
+          });
+        }
       });
   };
 

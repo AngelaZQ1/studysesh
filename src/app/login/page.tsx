@@ -34,7 +34,7 @@ export default function Page() {
     },
   });
 
-  const handleSubmit = (values: { email: any; password: any }) => {
+  const handleSubmit = (values: { email: string; password: string }) => {
     signInWithEmailAndPassword(auth, values.email, values.password)
       .then(() => {
         router.push("/dashboard");
@@ -45,6 +45,10 @@ export default function Page() {
           form.setErrors({
             email: "Invalid email or password",
             password: "Invalid email or password",
+          });
+        } else if (error.code === "auth/invalid-email") {
+          form.setErrors({
+            email: "Invalid email",
           });
         } else {
           notifications.show({
