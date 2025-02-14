@@ -35,7 +35,7 @@ export default function Page() {
   };
 
   return (
-    <Stack p={30} h="100vh" gap={30}>
+    <Stack p={30} pt={10} h="100vh" gap={30}>
       <Group grow align="stretch" h={200}>
         <Button onClick={open} h="inherit" variant="primary">
           Plan a Sesh

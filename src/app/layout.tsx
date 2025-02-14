@@ -21,7 +21,8 @@ import { useEffect, useState } from "react";
 import { User, onAuthStateChanged } from "firebase/auth";
 import { auth } from "../../firebase";
 import useUser from "./_hooks/useUser";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+import NavBar from "./_components/NavBar";
 
 const theme = createTheme({
   components: {
@@ -46,23 +47,30 @@ export default function RootLayout({
 }>) {
   const { getUser } = useUser();
   const router = useRouter();
+  const pathname = usePathname();
+  const routesWithNav = ["/dashboard"];
+
   const [firebaseUser, setCurrentUser] = useState<User | null>(null);
   const [userId, setUserId] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     onAuthStateChanged(auth, async (firebaseUser) => {
-      if (!firebaseUser) {
-        router.push("/login");
-      } else {
+      if (firebaseUser) {
         setCurrentUser(firebaseUser);
 
         const user = await getUser({ firebaseUid: firebaseUser.uid });
         setUserId(user.id);
+      } else {
+        // if user is on a route that requires auth and is not logged in, redirect to login
+        if (routesWithNav.includes(pathname)) {
+          router.push("/login");
+        }
       }
       setLoading(false);
     });
-  }, [getUser]);
+  }, [getUser, pathname, router]);
+
   return (
     <html lang="en" {...mantineHtmlProps}>
       <head>
@@ -82,6 +90,7 @@ export default function RootLayout({
                 </Flex>
               ) : (
                 <UserContext.Provider value={{ firebaseUser, userId }}>
+                  {routesWithNav.includes(pathname) && <NavBar />}
                   {children}
                 </UserContext.Provider>
               )}
