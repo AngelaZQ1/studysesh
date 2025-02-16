@@ -61,6 +61,7 @@ export default function RootLayout({
 
         const user = await getUser({ firebaseUid: firebaseUser.uid });
         setUserId(user.id);
+        router.push("/dashboard");
       } else {
         // if user is on a route that requires auth and is not logged in, redirect to login
         if (routesWithNav.includes(pathname)) {
