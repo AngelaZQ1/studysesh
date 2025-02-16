@@ -11,8 +11,10 @@ import { FiChevronDown, FiLogOut } from "react-icons/fi";
 import { getAuth, signOut } from "firebase/auth";
 import { notifications } from "@mantine/notifications";
 import classes from "./NavBar.module.css";
+import { useRouter } from "next/navigation";
 
 export default function NavBar() {
+  const router = useRouter();
   const { firebaseUser } = useUserContext();
   const { getUser } = useUser();
   const [user, setUser] = useState<User | null>(null);
@@ -27,6 +29,10 @@ export default function NavBar() {
 
     fetchUser();
   }, [firebaseUser]);
+
+  const navigateProfilePage = () => {
+    router.push(`/profile/${user?.id}`);
+  };
 
   const handleLogOut = () => {
     const auth = getAuth();
@@ -76,16 +82,12 @@ export default function NavBar() {
                 </Button>
               </Menu.Target>
               <Menu.Dropdown>
-                <Menu.Item leftSection={<FiLogOut size={14} />}>
-                  <Button
-                    p={0}
-                    color="black"
-                    variant="transparent"
-                    size="xs"
-                    onClick={handleLogOut}
-                  >
-                    Log Out
-                  </Button>
+                <Menu.Item onClick={navigateProfilePage}>Profile</Menu.Item>
+                <Menu.Item
+                  leftSection={<FiLogOut size={14} />}
+                  onClick={handleLogOut}
+                >
+                  Log Out
                 </Menu.Item>
               </Menu.Dropdown>
             </Menu>
