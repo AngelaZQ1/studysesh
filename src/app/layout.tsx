@@ -55,22 +55,26 @@ export default function RootLayout({
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    onAuthStateChanged(auth, async (firebaseUser) => {
+    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       if (firebaseUser) {
         setCurrentUser(firebaseUser);
 
         const user = await getUser({ firebaseUid: firebaseUser.uid });
         setUserId(user.id);
-        router.push("/dashboard");
+
+        if (pathname === "/login") {
+          router.push("/dashboard"); // Redirect only from login page
+        }
       } else {
-        // if user is on a route that requires auth and is not logged in, redirect to login
         if (routesWithNav.includes(pathname)) {
           router.push("/login");
         }
       }
       setLoading(false);
     });
-  }, [getUser, pathname, router]);
+
+    return () => unsubscribe();
+  }, [getUser, router]);
 
   return (
     <html lang="en" {...mantineHtmlProps}>
