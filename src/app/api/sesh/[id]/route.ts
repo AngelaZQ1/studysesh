@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { authAdmin } from "../../../../../firebaseAdmin";
 import prisma from "../../../../../prisma/client";
 
+// Update a Sesh with the given id
 export async function PUT(request: Request) {
   try {
     const body = await request.json();
@@ -68,6 +69,7 @@ export async function PUT(request: Request) {
   }
 }
 
+// Delete the Sesh with the given id
 export async function DELETE(request: Request) {
   try {
     const id = Number(request.url.split("/").pop());
