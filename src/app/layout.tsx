@@ -49,7 +49,7 @@ export default function RootLayout({
   const { getUser } = useUser();
   const router = useRouter();
   const pathname = usePathname();
-  const routesWithNav = ["/dashboard"];
+  const routesWithoutNav = ["/signup", "/login"];
 
   const [firebaseUser, setCurrentUser] = useState<FirebaseUser | null>(null);
   const [user, setUser] = useState<User | null>(null);
@@ -67,7 +67,7 @@ export default function RootLayout({
           router.push("/dashboard"); // Redirect only from login page
         }
       } else {
-        if (routesWithNav.includes(pathname)) {
+        if (!routesWithoutNav.includes(pathname)) {
           router.push("/login");
         }
       }
@@ -96,7 +96,7 @@ export default function RootLayout({
                 </Flex>
               ) : (
                 <UserContext.Provider value={{ firebaseUser, user }}>
-                  {routesWithNav.includes(pathname) && <NavBar />}
+                  {!routesWithoutNav.includes(pathname) && <NavBar />}
                   {children}
                 </UserContext.Provider>
               )}

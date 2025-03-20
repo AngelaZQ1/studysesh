@@ -1,6 +1,6 @@
 import useUserContext from "@/app/_hooks/useUserContext";
 import { Sesh } from "@/app/_types/types";
-import { Popover, Text, Box, Stack, Flex, Button } from "@mantine/core";
+import { Box, Button, Flex, Popover, Stack, Text } from "@mantine/core";
 import moment from "moment";
 import { FiCalendar, FiClock, FiEdit3, FiMapPin } from "react-icons/fi";
 import { PiUsersBold } from "react-icons/pi";
@@ -12,7 +12,7 @@ const EventComponent = ({
   event: Sesh;
   handleEdit: (sesh: Sesh) => void;
 }) => {
-  const { userId } = useUserContext();
+  const { user } = useUserContext();
   const participantsString = event.participants
     .map((p) => `${p.firstName} ${p.lastName}`)
     .join(", ");
@@ -62,7 +62,7 @@ const EventComponent = ({
             )}
           </Stack>
 
-          {event.ownerId === userId ? (
+          {event.ownerId === user.id ? (
             <Button
               variant="outline"
               onClick={() => handleEdit(event)}

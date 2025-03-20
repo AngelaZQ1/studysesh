@@ -1,11 +1,11 @@
 import { useForm } from "@mantine/form";
 import { notifications } from "@mantine/notifications";
-import useSesh from "./useSesh";
-import useUserContext from "./useUserContext";
-import { useEffect, useState } from "react";
-import useUser from "./useUser";
-import { Sesh } from "../_types/types";
 import moment from "moment";
+import { useEffect, useState } from "react";
+import { Sesh } from "../_types/types";
+import useSesh from "./useSesh";
+import useUser from "./useUser";
+import useUserContext from "./useUserContext";
 
 type User = {
   firebaseUid: string;
@@ -22,7 +22,7 @@ interface NewSeshModalProps {
 
 const useNewSeshModal = ({ onSubmit, seshToEdit }: NewSeshModalProps) => {
   const { getAllUsers } = useUser();
-  const { firebaseUser, userId } = useUserContext();
+  const { firebaseUser, user } = useUserContext();
   const { createSesh, updateSesh, deleteSesh } = useSesh();
 
   const [allUsers, setAllUsers] = useState<User[]>([]);
@@ -31,7 +31,7 @@ const useNewSeshModal = ({ onSubmit, seshToEdit }: NewSeshModalProps) => {
 
   const fetchUsers = async () => {
     const users = await getAllUsers();
-    const otherUsers = users.filter((user: User) => user.id !== userId);
+    const otherUsers = users.filter((u: User) => u.id !== user.id);
     setAllUsers(otherUsers);
   };
 
