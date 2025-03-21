@@ -2,8 +2,9 @@ import { useForm } from "@mantine/form";
 import { notifications } from "@mantine/notifications";
 import moment from "moment";
 import { useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
 import { Sesh } from "../_types/types";
-import useSesh from "./useSesh";
+import { createSesh, deleteSesh, updateSesh } from "../seshSlice";
 import useUser from "./useUser";
 import useUserContext from "./useUserContext";
 
@@ -23,7 +24,7 @@ interface NewSeshModalProps {
 const useNewSeshModal = ({ onSubmit, seshToEdit }: NewSeshModalProps) => {
   const { getAllUsers } = useUser();
   const { firebaseUser, user } = useUserContext();
-  const { createSesh, updateSesh, deleteSesh } = useSesh();
+  const dispatch = useDispatch();
 
   const [allUsers, setAllUsers] = useState<User[]>([]);
   const [selectedUserIds, setSelectedUserIds] = useState<string[]>([]);
@@ -100,7 +101,7 @@ const useNewSeshModal = ({ onSubmit, seshToEdit }: NewSeshModalProps) => {
     }
 
     setPopoverOpened(false);
-    await deleteSesh(Number(seshToEdit.id));
+    dispatch(deleteSesh({ id: seshToEdit.id, idToken: seshToEdit.idToken }));
     notifications.show({
       title: "Success!",
       message: "Sesh successfully cancelled.",
@@ -124,7 +125,13 @@ const useNewSeshModal = ({ onSubmit, seshToEdit }: NewSeshModalProps) => {
     form.validate();
 
     const requestBody = await getRequestBody(values);
-    await updateSesh(Number(values.id), requestBody);
+    dispatch(
+      updateSesh({
+        id: Number(values.id),
+        updatedSesh: requestBody,
+        idToken: requestBody.idToken,
+      })
+    );
 
     notifications.show({
       title: "Success!",
@@ -148,7 +155,9 @@ const useNewSeshModal = ({ onSubmit, seshToEdit }: NewSeshModalProps) => {
     form.validate();
 
     const requestBody = await getRequestBody(values);
-    createSesh(requestBody);
+    dispatch(
+      createSesh({ newSesh: requestBody, idToken: requestBody.idToken })
+    );
 
     notifications.show({
       title: "Success!",

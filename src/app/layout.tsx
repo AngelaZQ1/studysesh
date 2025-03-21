@@ -1,29 +1,31 @@
 "use client";
-import { Notifications } from "@mantine/notifications";
-import "./globals.css";
 import "@mantine/core/styles.css";
 import "@mantine/dates/styles.css";
+import { Notifications } from "@mantine/notifications";
 import "@mantine/notifications/styles.css";
+import "./globals.css";
 
 import {
   Center,
   ColorSchemeScript,
+  createTheme,
   Flex,
   Loader,
-  MantineProvider,
-  createTheme,
   mantineHtmlProps,
+  MantineProvider,
 } from "@mantine/core";
 import { emotionTransform, MantineEmotionProvider } from "@mantine/emotion";
-import { RootStyleRegistry } from "./EmotionRootStyleRegistry";
-import UserContext from "./_contexts/UserContext";
-import { useEffect, useState } from "react";
-import { User as FirebaseUser, onAuthStateChanged } from "firebase/auth";
-import { auth } from "../../firebase";
-import useUser from "./_hooks/useUser";
-import { usePathname, useRouter } from "next/navigation";
-import NavBar from "./_components/NavBar";
 import { User } from "@prisma/client";
+import { User as FirebaseUser, onAuthStateChanged } from "firebase/auth";
+import { usePathname, useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { Provider } from "react-redux";
+import { auth } from "../../firebase";
+import { RootStyleRegistry } from "./EmotionRootStyleRegistry";
+import NavBar from "./_components/NavBar";
+import UserContext from "./_contexts/UserContext";
+import useUser from "./_hooks/useUser";
+import store from "./store";
 
 const theme = createTheme({
   components: {
@@ -46,7 +48,7 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const { getUser } = useUser();
+  const { getUserByUid } = useUser();
   const router = useRouter();
   const pathname = usePathname();
   const routesWithoutNav = ["/signup", "/login"];
@@ -60,7 +62,7 @@ export default function RootLayout({
       if (firebaseUser) {
         setCurrentUser(firebaseUser);
 
-        const user = await getUser({ firebaseUid: firebaseUser.uid });
+        const user = await getUserByUid({ firebaseUid: firebaseUser.uid });
         setUser(user);
 
         if (pathname === "/login") {
@@ -96,8 +98,10 @@ export default function RootLayout({
                 </Flex>
               ) : (
                 <UserContext.Provider value={{ firebaseUser, user }}>
-                  {!routesWithoutNav.includes(pathname) && <NavBar />}
-                  {children}
+                  <Provider store={store}>
+                    {!routesWithoutNav.includes(pathname) && <NavBar />}
+                    {children}
+                  </Provider>
                 </UserContext.Provider>
               )}
             </MantineProvider>

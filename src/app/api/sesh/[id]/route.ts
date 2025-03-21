@@ -1,3 +1,4 @@
+import { pusherServer } from "@/app/pusher";
 import { NextResponse } from "next/server";
 import { authAdmin } from "../../../../../firebaseAdmin";
 import prisma from "../../../../../prisma/client";
@@ -51,6 +52,17 @@ export async function PUT(request: Request) {
         },
       });
 
+      const updatedSeshWithParticipants = await prisma.sesh.findUnique({
+        where: { id: updatedSesh.id },
+        include: { participants: true },
+      });
+
+      pusherServer.trigger(
+        "public",
+        "update-sesh",
+        updatedSeshWithParticipants
+      );
+
       console.log("Sesh successfully updated", updatedSesh);
       return NextResponse.json(updatedSesh, { status: 201 });
     } catch (error) {
@@ -86,11 +98,20 @@ export async function DELETE(request: Request) {
     try {
       authAdmin.verifyIdToken(idToken);
 
+      const seshToDelete = await prisma.sesh.findUnique({
+        where: {
+          id,
+        },
+        include: { participants: true },
+      });
+
       const deletedSesh = await prisma.sesh.delete({
         where: {
           id,
         },
       });
+
+      pusherServer.trigger("public", "delete-sesh", seshToDelete);
 
       console.log("Sesh successfully deleted", deletedSesh);
       return NextResponse.json(deletedSesh, { status: 201 });
