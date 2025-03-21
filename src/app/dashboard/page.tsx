@@ -2,14 +2,17 @@
 import { Button, Card, Group, Stack, Text } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { useEffect, useState } from "react";
-import useSesh from "../_hooks/useSesh";
 import { Sesh } from "../_types/types";
 import NewSeshModal from "./_components/NewSeshModal";
 import SeshCalendar from "./_components/SeshCalendar";
 
-export default function Page() {
+interface DashboardProps {
+  seshes: Sesh[];
+  fetchSeshes: () => Promise<void>;
+}
+
+export default function Dashboard({ seshes, fetchSeshes }: DashboardProps) {
   const [opened, { open, close }] = useDisclosure(false);
-  const { seshes, fetchSeshes } = useSesh();
 
   const [seshToEdit, setSeshToEdit] = useState<Sesh | null>(null);
 

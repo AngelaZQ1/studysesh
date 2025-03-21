@@ -1,3 +1,4 @@
+import { pusherServer } from "@/app/pusher";
 import { Sesh } from "@prisma/client";
 import { NextResponse } from "next/server";
 import { authAdmin } from "../../../../firebaseAdmin";
@@ -49,6 +50,13 @@ export async function POST(request: Request) {
           owner: { connect: { id: ownerId } },
         },
       });
+
+      const newSeshWithParticipants = await prisma.sesh.findUnique({
+        where: { id: newSesh.id },
+        include: { participants: true },
+      });
+
+      pusherServer.trigger("public", "new-sesh", newSeshWithParticipants);
 
       console.log("Sesh successfully created", newSesh);
       return NextResponse.json(newSesh, { status: 201 });
