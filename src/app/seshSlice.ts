@@ -28,7 +28,6 @@ export const seshSlice = createSlice({
 export const fetchAllSeshes = createAsyncThunk(
   "seshes/fetchAllSeshes",
   async (idToken: string) => {
-    console.log("FETCH ALL SESHES");
     try {
       const res = await fetch(`/api/sesh`, {
         headers: {
