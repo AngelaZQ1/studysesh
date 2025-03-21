@@ -1,9 +1,13 @@
+import { useState } from "react";
+import { Sesh } from "../_types/types";
 import useUserContext from "./useUserContext";
 
 const useSesh = () => {
   const { firebaseUser } = useUserContext();
 
-  const getAllSeshes = async () => {
+  const [seshes, setSeshes] = useState<Sesh[]>([]);
+
+  const fetchSeshes = async () => {
     const idToken = await firebaseUser.getIdToken();
     try {
       const res = await fetch(`/api/sesh`, {
@@ -12,7 +16,7 @@ const useSesh = () => {
         },
       });
       const seshes = await res.json();
-      return seshes;
+      setSeshes(seshes);
     } catch (err) {
       console.error(err);
     }
@@ -69,7 +73,13 @@ const useSesh = () => {
     });
   };
 
-  return { getAllSeshes, createSesh, updateSesh, deleteSesh };
+  return {
+    seshes,
+    fetchSeshes,
+    createSesh,
+    updateSesh,
+    deleteSesh,
+  };
 };
 
 export default useSesh;

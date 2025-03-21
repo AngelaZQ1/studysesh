@@ -1,10 +1,11 @@
 "use client";
 import { createContext } from "react";
-import { User } from "firebase/auth";
+import { User as FirebaseUser } from "firebase/auth";
+import { User } from "@prisma/client";
 
 export interface UserContextType {
-  firebaseUser: User;
-  userId: number;
+  firebaseUser: FirebaseUser;
+  user: User;
 }
 
 const UserContext = createContext<UserContextType | null>(null);

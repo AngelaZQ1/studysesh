@@ -18,11 +18,12 @@ import { emotionTransform, MantineEmotionProvider } from "@mantine/emotion";
 import { RootStyleRegistry } from "./EmotionRootStyleRegistry";
 import UserContext from "./_contexts/UserContext";
 import { useEffect, useState } from "react";
-import { User, onAuthStateChanged } from "firebase/auth";
+import { User as FirebaseUser, onAuthStateChanged } from "firebase/auth";
 import { auth } from "../../firebase";
 import useUser from "./_hooks/useUser";
 import { usePathname, useRouter } from "next/navigation";
 import NavBar from "./_components/NavBar";
+import { User } from "@prisma/client";
 
 const theme = createTheme({
   components: {
@@ -48,10 +49,10 @@ export default function RootLayout({
   const { getUser } = useUser();
   const router = useRouter();
   const pathname = usePathname();
-  const routesWithNav = ["/dashboard"];
+  const routesWithoutNav = ["/signup", "/login"];
 
-  const [firebaseUser, setCurrentUser] = useState<User | null>(null);
-  const [userId, setUserId] = useState<number | null>(null);
+  const [firebaseUser, setCurrentUser] = useState<FirebaseUser | null>(null);
+  const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -60,13 +61,13 @@ export default function RootLayout({
         setCurrentUser(firebaseUser);
 
         const user = await getUser({ firebaseUid: firebaseUser.uid });
-        setUserId(user.id);
+        setUser(user);
 
         if (pathname === "/login") {
           router.push("/dashboard"); // Redirect only from login page
         }
       } else {
-        if (routesWithNav.includes(pathname)) {
+        if (!routesWithoutNav.includes(pathname)) {
           router.push("/login");
         }
       }
@@ -74,7 +75,7 @@ export default function RootLayout({
     });
 
     return () => unsubscribe();
-  }, [getUser, router]);
+  }, []);
 
   return (
     <html lang="en" {...mantineHtmlProps}>
@@ -94,8 +95,8 @@ export default function RootLayout({
                   </Center>
                 </Flex>
               ) : (
-                <UserContext.Provider value={{ firebaseUser, userId }}>
-                  {routesWithNav.includes(pathname) && <NavBar />}
+                <UserContext.Provider value={{ firebaseUser, user }}>
+                  {!routesWithoutNav.includes(pathname) && <NavBar />}
                   {children}
                 </UserContext.Provider>
               )}

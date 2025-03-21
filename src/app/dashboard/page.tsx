@@ -1,31 +1,31 @@
 "use client";
-import { Card, Text, Button, Group, Stack } from "@mantine/core";
+import { Button, Card, Group, Stack, Text } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import NewSeshModal from "./_components/NewSeshModal";
-import SeshCalendar from "./_components/SeshCalendar";
-import useSesh from "../_hooks/useSesh";
 import { useEffect, useState } from "react";
 import { Sesh } from "../_types/types";
+import NewSeshModal from "./_components/NewSeshModal";
+import SeshCalendar from "./_components/SeshCalendar";
 
-export default function Page() {
+interface DashboardProps {
+  seshes: Sesh[];
+  fetchSeshes: () => Promise<void>;
+}
+
+export default function Dashboard({ seshes, fetchSeshes }: DashboardProps) {
   const [opened, { open, close }] = useDisclosure(false);
-  const { getAllSeshes } = useSesh();
 
-  const [seshes, setSeshes] = useState<Sesh[]>([]);
   const [seshToEdit, setSeshToEdit] = useState<Sesh | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
-      const seshes = await getAllSeshes();
-      setSeshes(seshes);
+      await fetchSeshes();
     };
     fetchData();
   }, []);
 
   const handleSubmit = async () => {
-    const seshes = await getAllSeshes();
+    await fetchSeshes();
     setSeshToEdit(null);
-    setSeshes(seshes);
     close();
   };
 

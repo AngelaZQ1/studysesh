@@ -1,8 +1,10 @@
-import { NextResponse } from "next/server";
-import prisma from "../../../../prisma/client";
-import { authAdmin } from "../../../../firebaseAdmin";
+import { pusherServer } from "@/app/pusher";
 import { Sesh } from "@prisma/client";
+import { NextResponse } from "next/server";
+import { authAdmin } from "../../../../firebaseAdmin";
+import prisma from "../../../../prisma/client";
 
+// Create a new Sesh
 export async function POST(request: Request) {
   try {
     const body = await request.json();
@@ -49,6 +51,13 @@ export async function POST(request: Request) {
         },
       });
 
+      const newSeshWithParticipants = await prisma.sesh.findUnique({
+        where: { id: newSesh.id },
+        include: { participants: true },
+      });
+
+      pusherServer.trigger("public", "new-sesh", newSeshWithParticipants);
+
       console.log("Sesh successfully created", newSesh);
       return NextResponse.json(newSesh, { status: 201 });
     } catch (error) {
@@ -67,6 +76,7 @@ export async function POST(request: Request) {
   }
 }
 
+// Get all Seshes that the current user is a part of
 export async function GET(request: Request) {
   try {
     const idToken = request.headers.get("authorization")?.split("Bearer ")[1];
