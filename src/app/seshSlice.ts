@@ -15,6 +15,7 @@ export const seshSlice = createSlice({
       })
       .addCase(fetchAllSeshes.fulfilled, (state, action) => {
         state.status = "succeeded";
+        // Add any fetched posts to the array
         state.seshes = action.payload;
       })
       .addCase(fetchAllSeshes.rejected, (state, action) => {
