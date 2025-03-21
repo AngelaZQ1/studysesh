@@ -125,7 +125,13 @@ const useNewSeshModal = ({ onSubmit, seshToEdit }: NewSeshModalProps) => {
     form.validate();
 
     const requestBody = await getRequestBody(values);
-    dispatch(updateSesh({ id: Number(values.id), updatedSesh: requestBody }));
+    dispatch(
+      updateSesh({
+        id: Number(values.id),
+        updatedSesh: requestBody,
+        idToken: requestBody.idToken,
+      })
+    );
 
     notifications.show({
       title: "Success!",
