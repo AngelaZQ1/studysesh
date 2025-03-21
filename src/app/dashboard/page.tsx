@@ -2,29 +2,31 @@
 import { Button, Card, Group, Stack, Text } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
+import usePusher from "../_hooks/usePusher";
+import useUserContext from "../_hooks/useUserContext";
 import { Sesh } from "../_types/types";
+import { fetchAllSeshes } from "../seshSlice";
 import NewSeshModal from "./_components/NewSeshModal";
 import SeshCalendar from "./_components/SeshCalendar";
 
-interface DashboardProps {
-  seshes: Sesh[];
-  fetchSeshes: () => Promise<void>;
-}
-
-export default function Dashboard({ seshes, fetchSeshes }: DashboardProps) {
+export default function Dashboard() {
+  const { firebaseUser } = useUserContext();
+  usePusher();
   const [opened, { open, close }] = useDisclosure(false);
-
   const [seshToEdit, setSeshToEdit] = useState<Sesh | null>(null);
+  const dispatch = useDispatch();
 
   useEffect(() => {
-    const fetchData = async () => {
-      await fetchSeshes();
-    };
-    fetchData();
+    firebaseUser.getIdToken().then((idToken) => {
+      dispatch(fetchAllSeshes(idToken));
+    });
   }, []);
 
   const handleSubmit = async () => {
-    await fetchSeshes();
+    firebaseUser.getIdToken().then((idToken) => {
+      dispatch(fetchAllSeshes(idToken));
+    });
     setSeshToEdit(null);
     close();
   };
@@ -51,7 +53,7 @@ export default function Dashboard({ seshes, fetchSeshes }: DashboardProps) {
         </Card>
       </Group>
 
-      <SeshCalendar seshes={seshes} handleEdit={handleEditSesh} />
+      <SeshCalendar handleEdit={handleEditSesh} />
 
       <NewSeshModal
         opened={opened}
