@@ -68,12 +68,13 @@ export default function RootLayout({
         if (pathname === "/login") {
           router.push("/dashboard"); // Redirect only from login page
         }
+        setLoading(false);
       } else {
         if (!routesWithoutNav.includes(pathname)) {
           router.push("/login");
         }
+        setLoading(false);
       }
-      setLoading(false);
     });
 
     return () => unsubscribe();
@@ -97,7 +98,7 @@ export default function RootLayout({
                   </Center>
                 </Flex>
               ) : (
-                <UserContext.Provider value={{ firebaseUser, user }}>
+                <UserContext.Provider value={{ firebaseUser, user, setUser }}>
                   <Provider store={store}>
                     {!routesWithoutNav.includes(pathname) && <NavBar />}
                     {children}
