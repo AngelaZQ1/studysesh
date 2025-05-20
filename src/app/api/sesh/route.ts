@@ -4,6 +4,7 @@ import { NextResponse } from "next/server";
 import { authAdmin } from "../../../../firebaseAdmin";
 import prisma from "../../../../prisma/client";
 
+// POST api/sesh
 // Create a new Sesh
 export async function POST(request: Request) {
   try {
@@ -76,6 +77,7 @@ export async function POST(request: Request) {
   }
 }
 
+// GET api/sesh
 // Get all Seshes that the current user is a part of
 export async function GET(request: Request) {
   try {
