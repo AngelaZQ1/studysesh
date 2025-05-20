@@ -43,7 +43,7 @@ export default function NavBar() {
 
   return (
     <nav className={classes.nav}>
-      <Flex px={30} py={10} pt={8} justify="space-between" gap="md">
+      <Flex px={30} py={5} pt={9} justify="space-between" gap="md">
         <Image src={logo} alt="logo" width={45} />
 
         <Flex align="center" gap={50}>
