@@ -8,6 +8,7 @@ const useUserContext = (): UserContextType => {
   }
   return {
     firebaseUser: context.firebaseUser,
+    setFirebaseUser: context.setFirebaseUser,
     user: context.user,
     setUser: context.setUser,
   };

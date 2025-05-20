@@ -13,7 +13,7 @@ import classes from "./NavBar.module.css";
 
 export default function NavBar() {
   const router = useRouter();
-  const { user } = useUserContext();
+  const { setFirebaseUser, setUser, user } = useUserContext();
 
   const navigateProfilePage = () => {
     router.push(`/profile/${user?.id}`);
@@ -29,6 +29,8 @@ export default function NavBar() {
           autoClose: 5000,
           color: "pink",
         });
+        setFirebaseUser(null);
+        setUser(null);
       })
       .catch((error) => {
         notifications.show({

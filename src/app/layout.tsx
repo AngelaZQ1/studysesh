@@ -53,23 +53,24 @@ export default function RootLayout({
   const pathname = usePathname();
   const routesWithoutNav = ["/signup", "/login"];
 
-  const [firebaseUser, setCurrentUser] = useState<FirebaseUser | null>(null);
+  const [firebaseUser, setFirebaseUser] = useState<FirebaseUser | null>(null);
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       if (firebaseUser) {
-        setCurrentUser(firebaseUser);
+        setFirebaseUser(firebaseUser);
 
         const user = await getUserByUid({ firebaseUid: firebaseUser.uid });
         setUser(user);
 
         if (pathname === "/login") {
-          router.push("/dashboard"); // Redirect only from login page
+          router.push("/dashboard"); // If the user logs in, navigate to dashboard
         }
         setLoading(false);
       } else {
+        // Only navigate if not on signup or login page
         if (!routesWithoutNav.includes(pathname)) {
           router.push("/login");
         }
@@ -98,7 +99,9 @@ export default function RootLayout({
                   </Center>
                 </Flex>
               ) : (
-                <UserContext.Provider value={{ firebaseUser, user, setUser }}>
+                <UserContext.Provider
+                  value={{ firebaseUser, setFirebaseUser, user, setUser }}
+                >
                   <Provider store={store}>
                     {!routesWithoutNav.includes(pathname) && <NavBar />}
                     {children}

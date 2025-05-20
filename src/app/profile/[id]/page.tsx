@@ -14,7 +14,7 @@ import {
   Text,
   TextInput,
 } from "@mantine/core";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -26,9 +26,17 @@ export default function Page() {
   const { getUserById } = useUser();
   const [user, setUser] = useState<User | null>(null);
 
+  const router = useRouter();
   const pathname = usePathname();
   const userId = Number(pathname.split("/")[2]);
-  const isCurrentUser = currentUser.id === userId;
+
+  useEffect(() => {
+    if (firebaseUser === null) {
+      router.push("/login");
+    }
+  }, [firebaseUser, router]);
+
+  const isCurrentUser = currentUser && currentUser.id === userId;
 
   useEffect(() => {
     const fetchUser = async () => {

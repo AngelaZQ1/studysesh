@@ -5,6 +5,7 @@ import { createContext, Dispatch, SetStateAction } from "react";
 
 export interface UserContextType {
   firebaseUser: FirebaseUser;
+  setFirebaseUser: Dispatch<SetStateAction<FirebaseUser | null>>;
   user: User;
   setUser: Dispatch<SetStateAction<User | null>>;
 }
