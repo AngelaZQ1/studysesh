@@ -31,6 +31,7 @@ export default function NavBar() {
         });
         setFirebaseUser(null);
         setUser(null);
+        router.push("/login");
       })
       .catch((error) => {
         notifications.show({

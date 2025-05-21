@@ -25,7 +25,7 @@ model User {
 }
 
 model Sesh {
-  id           Int       @id @default(autoincrement())
+  id           Int      @id @default(autoincrement())
   title        String
   start        DateTime
   end          DateTime
@@ -33,6 +33,6 @@ model Sesh {
   location     String?
   virtual      Boolean
   ownerId      Int
-  owner        User      @relation(fields: [ownerId], references: [id])
-  participants User[]    @relation("SeshParticipants")
+  owner        User     @relation(fields: [ownerId], references: [id])
+  participants User[]   @relation("SeshParticipants")
 }
