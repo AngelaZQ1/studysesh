@@ -40,6 +40,7 @@ export async function POST(request: Request) {
 
 // GET /api/user
 // Gets the user with the given id or uid
+// If no id or uid is provided, returns all users
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const idParam = searchParams.get("id");
@@ -56,6 +57,8 @@ export async function GET(request: Request) {
     }
   } else if (uid) {
     user = await prisma.user.findUnique({ where: { firebaseUid: uid } });
+  } else {
+    user = await prisma.user.findMany();
   }
 
   if (!user) {

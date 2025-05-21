@@ -20,7 +20,6 @@ const useUser = () => {
   };
 
   const getUserByUid = async (requestBody: { firebaseUid: string }) => {
-    console.log("requestBody", requestBody);
     const res = await fetch(`/api/user?uid=${requestBody.firebaseUid}`, {});
     const user = await res.json();
     return user;
