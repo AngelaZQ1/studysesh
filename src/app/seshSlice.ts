@@ -10,22 +10,22 @@ export const seshSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder
-      .addCase(fetchAllSeshes.pending, (state, action) => {
+      .addCase(fetchSeshesForCurrentUser.pending, (state, action) => {
         state.status = "pending";
       })
-      .addCase(fetchAllSeshes.fulfilled, (state, action) => {
+      .addCase(fetchSeshesForCurrentUser.fulfilled, (state, action) => {
         state.status = "succeeded";
         // Add any fetched posts to the array
         state.seshes = action.payload;
       })
-      .addCase(fetchAllSeshes.rejected, (state, action) => {
+      .addCase(fetchSeshesForCurrentUser.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.error.message ?? "Unknown Error";
       });
   },
 });
 
-export const fetchAllSeshes = createAsyncThunk(
+export const fetchSeshesForCurrentUser = createAsyncThunk(
   "seshes/fetchAllSeshes",
   async (idToken: string) => {
     try {
