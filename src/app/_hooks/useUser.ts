@@ -1,3 +1,5 @@
+import { User } from "@prisma/client";
+
 const useUser = () => {
   const createUser = async (requestBody: {
     firebaseUid: string;
@@ -14,7 +16,7 @@ const useUser = () => {
       console.log("User successfully created", user);
     }
     if (res.status === 400) {
-      console.log("Error creating user", user);
+      console.error("Error creating user", user);
     }
     return user;
   };
@@ -26,7 +28,7 @@ const useUser = () => {
   };
 
   const getUserById = async (requestBody: { id: number }) => {
-    const res = await fetch(`/api/user/?id=${requestBody.id}`, {});
+    const res = await fetch(`/api/user?id=${requestBody.id}`, {});
     const user = await res.json();
     return user;
   };
@@ -37,7 +39,19 @@ const useUser = () => {
     return users;
   };
 
-  return { createUser, getAllUsers, getUserByUid, getUserById };
+  const updateUser = async (requestBody: User) => {
+    const res = await fetch(`/api/user?id=${requestBody.id}`, {
+      method: "PUT",
+      body: JSON.stringify({ ...requestBody }),
+    });
+    const user = await res.json();
+    if (res.status === 400) {
+      console.error("Error updating user", user);
+    }
+    return user;
+  };
+
+  return { createUser, getAllUsers, getUserByUid, getUserById, updateUser };
 };
 
 export default useUser;

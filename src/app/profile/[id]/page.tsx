@@ -5,14 +5,17 @@ import ProfileSesh from "@/app/profile/_components/ProfileSesh";
 import {
   Avatar,
   Box,
+  Button,
   Center,
   Container,
   Flex,
+  Group,
   Loader,
   Stack,
   Text,
   TextInput,
 } from "@mantine/core";
+import { FiEdit3 } from "react-icons/fi";
 import useProfilePage from "./useProfilePage";
 
 export default function Page() {
@@ -23,6 +26,13 @@ export default function Page() {
     isLoading,
     futureSeshes,
     pastSeshes,
+    firstName,
+    setFirstName,
+    lastName,
+    setLastName,
+    isEditing,
+    setIsEditing,
+    handleSave,
   } = useProfilePage();
 
   return (
@@ -39,22 +49,63 @@ export default function Page() {
         <>
           {isCurrentUser ? (
             <Stack gap={0}>
-              <Avatar color="pink" radius="xl" size={50} mb={20}>
-                {currentUser.firstName[0].toUpperCase() +
-                  currentUser.lastName[0].toUpperCase()}
-              </Avatar>
-              <Flex gap={10}>
-                <TextInput
-                  label="First Name"
-                  value={currentUser.firstName}
-                  flex="1"
-                />
-                <TextInput
-                  label="Last Name"
-                  value={currentUser.lastName}
-                  flex="1"
-                />
+              <Flex align="center">
+                <Avatar color="pink" radius="xl" size={50}>
+                  {currentUser.firstName[0].toUpperCase() +
+                    currentUser.lastName[0].toUpperCase()}
+                </Avatar>
+                {isEditing ? (
+                  <>
+                    <TextInput
+                      label="First"
+                      value={firstName}
+                      onChange={(e) => setFirstName(e.currentTarget.value)}
+                      flex="1"
+                      ml="xs"
+                      mr={5}
+                      mb={10}
+                    />
+                    <TextInput
+                      label="Last"
+                      value={lastName}
+                      onChange={(e) => setLastName(e.currentTarget.value)}
+                      flex="1"
+                      mb={10}
+                    />
+                  </>
+                ) : (
+                  <Text size="xl" ml="xs">
+                    {currentUser.firstName + " " + currentUser.lastName}
+                  </Text>
+                )}
+                {!isEditing && (
+                  <Button
+                    variant="default"
+                    onClick={() => setIsEditing(!isEditing)}
+                    leftSection={<FiEdit3 size={16} />}
+                    ml="auto"
+                  >
+                    Edit
+                  </Button>
+                )}
               </Flex>
+              {isEditing && (
+                <Group gap={5} sx={{ alignSelf: "flex-end" }}>
+                  <Button
+                    variant="default"
+                    onClick={() => setIsEditing(!isEditing)}
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    color="pink"
+                    onClick={handleSave}
+                    disabled={firstName == "" && lastName == ""}
+                  >
+                    Save
+                  </Button>
+                </Group>
+              )}
             </Stack>
           ) : (
             <Flex align="center" gap={10}>

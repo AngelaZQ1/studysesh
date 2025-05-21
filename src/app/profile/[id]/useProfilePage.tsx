@@ -2,20 +2,30 @@ import useUser from "@/app/_hooks/useUser";
 import useUserContext from "@/app/_hooks/useUserContext";
 import { User } from "@/app/_types/types";
 import { fetchSeshesForCurrentUser } from "@/app/seshSlice";
+import { AppDispatch } from "@/app/store";
+import { notifications } from "@mantine/notifications";
 import { Sesh } from "@prisma/client";
-import { usePathname } from "next/navigation";
-import { useRouter } from "next/router";
+import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 const useProfilePage = () => {
-  const { firebaseUser, user: currentUser } = useUserContext();
-  const dispatch = useDispatch();
+  const {
+    firebaseUser,
+    user: currentUser,
+    setUser: setCurrentUser,
+  } = useUserContext();
+  const { updateUser } = useUser();
+  const dispatch = useDispatch<AppDispatch>();
   const { seshes } = useSelector((state) => state.sesh);
 
   const { getUserById } = useUser();
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+
+  const [firstName, setFirstName] = useState(currentUser?.firstName || "");
+  const [lastName, setLastName] = useState(currentUser?.lastName || "");
+  const [isEditing, setIsEditing] = useState(false);
 
   const router = useRouter();
   const pathname = usePathname();
@@ -59,6 +69,23 @@ const useProfilePage = () => {
     (sesh: Sesh) => new Date(sesh.start) < new Date()
   );
 
+  const handleSave = async () => {
+    const updatedUser = {
+      ...currentUser,
+      firstName,
+      lastName,
+    };
+    const user = await updateUser(updatedUser);
+    setCurrentUser(user);
+    setIsEditing(false);
+    notifications.show({
+      title: "Success!",
+      message: "Your name has been updated.",
+      autoClose: 5000,
+      color: "pink",
+    });
+  };
+
   return {
     user,
     isCurrentUser,
@@ -67,6 +94,13 @@ const useProfilePage = () => {
     fetchUserAndSeshes,
     futureSeshes,
     pastSeshes,
+    firstName,
+    setFirstName,
+    lastName,
+    setLastName,
+    isEditing,
+    setIsEditing,
+    handleSave,
   };
 };
 
