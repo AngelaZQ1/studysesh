@@ -1,4 +1,6 @@
 "use client";
+import { Sesh } from "@/app/_types/types";
+import useNewSeshModal from "@/app/dashboard/_components/useNewSeshModal";
 import {
   Box,
   Button,
@@ -8,17 +10,14 @@ import {
   Modal,
   MultiSelect,
   Popover,
+  Radio,
   Stack,
   Text,
   TextInput,
 } from "@mantine/core";
-import React from "react";
 import { DatePicker, TimeInput } from "@mantine/dates";
-import { Radio } from "@mantine/core";
-import { FiMapPin } from "react-icons/fi";
-import useNewSeshModal from "@/app/_hooks/useNewSeshModal";
-import { Sesh } from "@/app/_types/types";
 import { notifications } from "@mantine/notifications";
+import { FiMapPin } from "react-icons/fi";
 import { LuCalendarX2 } from "react-icons/lu";
 
 interface NewSeshModalProps {

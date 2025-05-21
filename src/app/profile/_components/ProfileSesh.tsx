@@ -11,7 +11,7 @@ export default function ProfileSesh({ sesh }: { sesh: Sesh }) {
   return (
     <Card shadow="sm" padding="lg" mb="sm" radius="md" withBorder>
       <Flex key={sesh.id} justify="space-between" align="start" gap={10}>
-        <Stack gap="2">
+        <Stack gap="8">
           <Text fw={700}>{sesh.title}</Text>
           <Stack gap="3">
             <Flex gap={3} align="center" w="max-content">

@@ -6,3 +6,6 @@ export default configureStore({
     sesh: seshReducer,
   },
 });
+
+export type AppDispatch = typeof store.dispatch;
+export type RootState = ReturnType<typeof store.getState>;

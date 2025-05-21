@@ -1,10 +1,7 @@
 "use client";
 
-import useUser from "@/app/_hooks/useUser";
-import useUserContext from "@/app/_hooks/useUserContext";
-import { Sesh, User } from "@/app/_types/types";
+import { Sesh } from "@/app/_types/types";
 import ProfileSesh from "@/app/profile/_components/ProfileSesh";
-import { fetchSeshesForCurrentUser } from "@/app/seshSlice";
 import {
   Avatar,
   Box,
@@ -16,60 +13,17 @@ import {
   Text,
   TextInput,
 } from "@mantine/core";
-import { usePathname, useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import useProfilePage from "./useProfilePage";
 
 export default function Page() {
-  const { firebaseUser, user: currentUser } = useUserContext();
-  const dispatch = useDispatch();
-  const { seshes } = useSelector((state) => state.sesh);
-
-  const { getUserById } = useUser();
-  const [user, setUser] = useState<User | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-
-  const router = useRouter();
-  const pathname = usePathname();
-  const userId = Number(pathname.split("/")[2]);
-
-  useEffect(() => {
-    if (firebaseUser === null) {
-      router.push("/login");
-    }
-  }, [firebaseUser, router]);
-
-  const isCurrentUser = currentUser && currentUser.id === userId;
-
-  useEffect(() => {
-    const fetchUserAndSeshes = async () => {
-      const fetchUser = async () => {
-        const res = await getUserById({ id: userId });
-        if (res.error) {
-          setUser(null);
-        } else {
-          setUser(res);
-        }
-      };
-
-      const fetchSeshes = async () => {
-        const idToken = await firebaseUser.getIdToken();
-        await dispatch(fetchSeshesForCurrentUser(idToken));
-      };
-
-      await Promise.all([fetchUser(), fetchSeshes()]);
-      setIsLoading(false);
-    };
-
-    fetchUserAndSeshes();
-  }, []);
-
-  const futureSeshes = seshes.filter(
-    (sesh: Sesh) => new Date(sesh.start) > new Date()
-  );
-  const pastSeshes = seshes.filter(
-    (sesh: Sesh) => new Date(sesh.start) < new Date()
-  );
+  const {
+    user,
+    isCurrentUser,
+    currentUser,
+    isLoading,
+    futureSeshes,
+    pastSeshes,
+  } = useProfilePage();
 
   return (
     <Container size={550} mt={100}>
@@ -92,12 +46,12 @@ export default function Page() {
               <Flex gap={10}>
                 <TextInput
                   label="First Name"
-                  placeholder={currentUser.firstName}
+                  value={currentUser.firstName}
                   flex="1"
                 />
                 <TextInput
                   label="Last Name"
-                  placeholder={currentUser.lastName}
+                  value={currentUser.lastName}
                   flex="1"
                 />
               </Flex>
