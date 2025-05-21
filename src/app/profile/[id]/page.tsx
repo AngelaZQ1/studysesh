@@ -81,53 +81,59 @@ export default function Page() {
         <Text size="xl" c="gray.7" mt={30} fw={700}>
           This user doesnt exist!
         </Text>
-      ) : isCurrentUser ? (
-        <Stack>
-          <Box>
-            <Avatar color="pink" radius="xl" size={50} mb={20}>
-              {currentUser.firstName[0] + currentUser.lastName[0]}
-            </Avatar>
-            <Flex gap={10}>
-              <TextInput
-                label="First Name"
-                placeholder={currentUser.firstName}
-                flex="1"
-              />
-              <TextInput
-                label="Last Name"
-                placeholder={currentUser.lastName}
-                flex="1"
-              />
+      ) : (
+        <>
+          {isCurrentUser ? (
+            <Stack gap={0}>
+              <Avatar color="pink" radius="xl" size={50} mb={20}>
+                {currentUser.firstName[0] + currentUser.lastName[0]}
+              </Avatar>
+              <Flex gap={10}>
+                <TextInput
+                  label="First Name"
+                  placeholder={currentUser.firstName}
+                  flex="1"
+                />
+                <TextInput
+                  label="Last Name"
+                  placeholder={currentUser.lastName}
+                  flex="1"
+                />
+              </Flex>
+            </Stack>
+          ) : (
+            <Flex align="center" gap={10}>
+              <Avatar color="pink" radius="xl" size={50}>
+                {user.firstName[0].toUpperCase() +
+                  user.lastName[0].toUpperCase()}
+              </Avatar>
+              <Text size="xl">{user.firstName + " " + user.lastName}</Text>
             </Flex>
-          </Box>
-
-          <Box mt="xl">
+          )}
+          <Box mt={50}>
             <Text size="xl" mb="sm" fw={700}>
               Upcoming Seshes
             </Text>
             {futureSeshes.map((sesh: Sesh) => (
-              <ProfileSesh sesh={sesh} />
+              <ProfileSesh key={sesh.id} sesh={sesh} />
             ))}
           </Box>
-
-          <Box>
+          <Box mt={40}>
             <Text size="xl" mb="sm" fw={700}>
               Past Seshes
             </Text>
             <Stack gap={0}>
               {pastSeshes.map((sesh: Sesh) => (
-                <ProfileSesh sesh={sesh} />
+                <ProfileSesh key={sesh.id} sesh={sesh} />
               ))}
             </Stack>
           </Box>
-        </Stack>
-      ) : (
-        <Flex align="center" gap={10}>
-          <Avatar color="pink" radius="xl" size={50}>
-            {user.firstName[0].toUpperCase() + user.lastName[0].toUpperCase()}
-          </Avatar>
-          <Text size="xl">{user.firstName + " " + user.lastName}</Text>
-        </Flex>
+          {futureSeshes.length === 0 && pastSeshes.length === 0 && (
+            <Text size="xl" c="gray.7" mt={30} fw={700}>
+              This user has no seshes!
+            </Text>
+          )}
+        </>
       )}
     </Container>
   );

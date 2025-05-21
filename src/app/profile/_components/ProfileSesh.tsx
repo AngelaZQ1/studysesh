@@ -6,6 +6,8 @@ import { FiCalendar, FiClock, FiMapPin } from "react-icons/fi";
 
 export default function ProfileSesh({ sesh }: { sesh: Sesh }) {
   const { user } = useUserContext();
+
+  if (!user) return
   return (
     <Card shadow="xs" padding="lg" mb="sm" radius="md" withBorder>
       <Flex key={sesh.id} justify="space-between" align="start" gap={10}>

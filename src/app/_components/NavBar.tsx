@@ -29,9 +29,9 @@ export default function NavBar() {
           autoClose: 5000,
           color: "pink",
         });
+        router.push("/login");
         setFirebaseUser(null);
         setUser(null);
-        router.push("/login");
       })
       .catch((error) => {
         notifications.show({

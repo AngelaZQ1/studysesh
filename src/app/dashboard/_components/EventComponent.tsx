@@ -17,6 +17,8 @@ const EventComponent = ({
     .map((p) => `${p.firstName} ${p.lastName}`)
     .join(", ");
 
+  if (!user) return;
+
   return (
     <Popover withArrow position="top" withinPortal>
       <Popover.Target>
