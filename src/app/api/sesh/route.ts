@@ -105,7 +105,7 @@ export async function GET(request: Request) {
         where: {
           OR: [{ ownerId: userId }, { participants: { some: { id: userId } } }],
         },
-        include: { participants: true },
+        include: { participants: true, owner: true },
       });
 
       return NextResponse.json(seshes, { status: 200 });
