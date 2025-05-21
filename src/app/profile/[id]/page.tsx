@@ -86,7 +86,8 @@ export default function Page() {
           {isCurrentUser ? (
             <Stack gap={0}>
               <Avatar color="pink" radius="xl" size={50} mb={20}>
-                {currentUser.firstName[0] + currentUser.lastName[0]}
+                {currentUser.firstName[0].toUpperCase() +
+                  currentUser.lastName[0].toUpperCase()}
               </Avatar>
               <Flex gap={10}>
                 <TextInput

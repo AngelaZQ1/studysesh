@@ -7,9 +7,9 @@ import { FiCalendar, FiClock, FiMapPin } from "react-icons/fi";
 export default function ProfileSesh({ sesh }: { sesh: Sesh }) {
   const { user } = useUserContext();
 
-  if (!user) return
+  if (!user) return;
   return (
-    <Card shadow="xs" padding="lg" mb="sm" radius="md" withBorder>
+    <Card shadow="sm" padding="lg" mb="sm" radius="md" withBorder>
       <Flex key={sesh.id} justify="space-between" align="start" gap={10}>
         <Stack gap="2">
           <Text fw={700}>{sesh.title}</Text>
@@ -41,7 +41,7 @@ export default function ProfileSesh({ sesh }: { sesh: Sesh }) {
             <Text size="sm" mb={4}>
               Owner
             </Text>
-            <Flex align="center" gap="xs">
+            <Flex align="center" gap={5}>
               {sesh.owner.id === user.id ? (
                 <Avatar size="sm" color="pink">
                   {sesh.owner.firstName[0].toUpperCase() +
@@ -63,22 +63,24 @@ export default function ProfileSesh({ sesh }: { sesh: Sesh }) {
               <Text size="sm" mb={4}>
                 Participants
               </Text>
-              {sesh.participants.map((p) => (
-                <Flex align="center" gap="xs">
-                  {p.id === user.id ? (
-                    <Avatar size="sm" color="pink">
-                      {p.firstName[0].toUpperCase() +
-                        p.lastName[0].toUpperCase()}
-                    </Avatar>
-                  ) : (
-                    <Avatar size="sm">
-                      {p.firstName[0].toUpperCase() +
-                        p.lastName[0].toUpperCase()}
-                    </Avatar>
-                  )}
-                  <Text size="sm">{p.firstName + " " + p.lastName}</Text>
-                </Flex>
-              ))}
+              <Stack gap={7}>
+                {sesh.participants.map((p) => (
+                  <Flex align="center" gap={5}>
+                    {p.id === user.id ? (
+                      <Avatar size="sm" color="pink">
+                        {p.firstName[0].toUpperCase() +
+                          p.lastName[0].toUpperCase()}
+                      </Avatar>
+                    ) : (
+                      <Avatar size="sm">
+                        {p.firstName[0].toUpperCase() +
+                          p.lastName[0].toUpperCase()}
+                      </Avatar>
+                    )}
+                    <Text size="sm">{p.firstName + " " + p.lastName}</Text>
+                  </Flex>
+                ))}
+              </Stack>
             </Box>
           )}
         </Stack>
