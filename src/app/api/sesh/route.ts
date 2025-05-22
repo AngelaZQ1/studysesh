@@ -77,29 +77,30 @@ export async function POST(request: Request) {
   }
 }
 
-// GET api/sesh
-// Get all Seshes that the current user is a part of
+// GET api/sesh?userId=1
+// Get all Seshes that the user with the given id is a part of
 export async function GET(request: Request) {
   try {
+    const { searchParams } = new URL(request.url);
+    const userIdParam = searchParams.get("userId");
     const idToken = request.headers.get("authorization")?.split("Bearer ")[1];
 
     if (!idToken) {
-      return NextResponse.json(
-        { error: "idToken is required." },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "Missing idToken." }, { status: 400 });
+    }
+
+    if (!userIdParam) {
+      return NextResponse.json({ error: "Missing userId." }, { status: 400 });
+    }
+
+    const userId = Number(userIdParam);
+
+    if (isNaN(userId)) {
+      return NextResponse.json({ error: "Invalid userId." }, { status: 400 });
     }
 
     try {
-      const decodedToken = await authAdmin.verifyIdToken(idToken);
-      const uid = decodedToken.uid;
-
-      const userId = await prisma.user
-        .findUnique({ where: { firebaseUid: uid } })
-        .then((user) => {
-          if (!user) throw new Error("User not found");
-          return user.id;
-        });
+      authAdmin.verifyIdToken(idToken);
 
       const seshes: Sesh[] = await prisma.sesh.findMany({
         where: {
@@ -108,6 +109,7 @@ export async function GET(request: Request) {
         include: { participants: true, owner: true },
       });
 
+      console.log("Seshes successfully retrieved", seshes);
       return NextResponse.json(seshes, { status: 200 });
     } catch (error) {
       console.error("Error verifying token:", error);
@@ -117,9 +119,9 @@ export async function GET(request: Request) {
       );
     }
   } catch (error) {
-    console.error("Error fetching Seshes:", error);
+    console.error("Error retrieving Seshes:", error);
     return NextResponse.json(
-      { error: "Something went wrong." },
+      { error: "Error retrieving Seshes." },
       { status: 500 }
     );
   }

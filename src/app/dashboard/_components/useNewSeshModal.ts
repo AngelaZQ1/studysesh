@@ -6,7 +6,8 @@ import { useDispatch } from "react-redux";
 import useUser from "../../_hooks/useUser";
 import useUserContext from "../../_hooks/useUserContext";
 import { Sesh, User } from "../../_types/types";
-import { createSesh, deleteSesh, updateSesh } from "../../seshSlice";
+import { createSesh, deleteSesh, updateSesh } from "../../_redux/seshSlice";
+import { AppDispatch } from "@/app/_redux/store";
 
 interface NewSeshModalProps {
   onSubmit: () => void;
@@ -93,7 +94,9 @@ const useNewSeshModal = ({ onSubmit, seshToEdit }: NewSeshModalProps) => {
     }
 
     setPopoverOpened(false);
-    dispatch(deleteSesh({ id: seshToEdit.id, idToken: seshToEdit.idToken }));
+    dispatch(
+      deleteSesh({ id: Number(seshToEdit.id), idToken: seshToEdit.idToken })
+    );
     notifications.show({
       title: "Success!",
       message: "Sesh successfully cancelled.",

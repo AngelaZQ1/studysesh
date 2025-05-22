@@ -76,7 +76,7 @@ export default function Page() {
                   </>
                 ) : (
                   <Text size="xl" ml="xs">
-                    {currentUser.firstName + " " + currentUser.lastName}
+                    {user.firstName + " " + user.lastName}
                   </Text>
                 )}
                 {!isEditing && (

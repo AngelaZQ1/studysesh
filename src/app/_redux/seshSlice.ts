@@ -10,28 +10,28 @@ export const seshSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder
-      .addCase(fetchSeshesForCurrentUser.pending, (state, action) => {
+      .addCase(fetchSeshes.pending, (state, action) => {
         state.status = "pending";
       })
-      .addCase(fetchSeshesForCurrentUser.fulfilled, (state, action) => {
+      .addCase(fetchSeshes.fulfilled, (state, action) => {
         state.status = "succeeded";
         // Add any fetched posts to the array
         state.seshes = action.payload;
       })
-      .addCase(fetchSeshesForCurrentUser.rejected, (state, action) => {
+      .addCase(fetchSeshes.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.error.message ?? "Unknown Error";
       });
   },
 });
 
-export const fetchSeshesForCurrentUser = createAsyncThunk(
-  "seshes/fetchAllSeshes",
-  async (idToken: string) => {
+export const fetchSeshes = createAsyncThunk(
+  "seshes/fetchSeshes",
+  async (data: { idToken: string; userId: number }) => {
     try {
-      const res = await fetch(`/api/sesh`, {
+      const res = await fetch(`/api/sesh?userId=${data.userId}`, {
         headers: {
-          Authorization: `Bearer ${idToken}`,
+          Authorization: `Bearer ${data.idToken}`,
         },
       });
       const seshes = await res.json();

@@ -6,26 +6,27 @@ import { useDispatch } from "react-redux";
 import usePusher from "../_hooks/usePusher";
 import useUserContext from "../_hooks/useUserContext";
 import { Sesh } from "../_types/types";
-import { fetchSeshesForCurrentUser } from "../seshSlice";
 import NewSeshModal from "./_components/NewSeshModal";
 import SeshCalendar from "./_components/SeshCalendar";
+import { fetchSeshes } from "../_redux/seshSlice";
+import { AppDispatch } from "../_redux/store";
 
 export default function Dashboard() {
-  const { firebaseUser } = useUserContext();
+  const { firebaseUser, user } = useUserContext();
   usePusher();
   const [opened, { open, close }] = useDisclosure(false);
   const [seshToEdit, setSeshToEdit] = useState<Sesh | null>(null);
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
 
   useEffect(() => {
     firebaseUser.getIdToken().then((idToken) => {
-      dispatch(fetchSeshesForCurrentUser(idToken));
+      dispatch(fetchSeshes({ idToken, userId: user.id }));
     });
   }, []);
 
   const handleSubmit = async () => {
     firebaseUser.getIdToken().then((idToken) => {
-      dispatch(fetchSeshesForCurrentUser(idToken));
+      dispatch(fetchSeshes({ idToken, userId: user.id }));
     });
     setSeshToEdit(null);
     close();

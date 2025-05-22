@@ -25,7 +25,7 @@ import { RootStyleRegistry } from "./EmotionRootStyleRegistry";
 import NavBar from "./_components/NavBar";
 import UserContext from "./_contexts/UserContext";
 import useUser from "./_hooks/useUser";
-import store from "./store";
+import store from "./_redux/store";
 
 const theme = createTheme({
   components: {

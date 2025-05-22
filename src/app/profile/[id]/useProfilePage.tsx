@@ -1,8 +1,8 @@
 import useUser from "@/app/_hooks/useUser";
 import useUserContext from "@/app/_hooks/useUserContext";
+import { fetchSeshes } from "@/app/_redux/seshSlice";
+import { AppDispatch } from "@/app/_redux/store";
 import { User } from "@/app/_types/types";
-import { fetchSeshesForCurrentUser } from "@/app/seshSlice";
-import { AppDispatch } from "@/app/store";
 import { notifications } from "@mantine/notifications";
 import { Sesh } from "@prisma/client";
 import { usePathname, useRouter } from "next/navigation";
@@ -53,12 +53,12 @@ const useProfilePage = () => {
       }
     };
 
-    const fetchSeshes = async () => {
+    const fetchUserSeshes = async () => {
       const idToken = await firebaseUser.getIdToken();
-      await dispatch(fetchSeshesForCurrentUser(idToken));
+      await dispatch(fetchSeshes({ idToken, userId: currentUser.id }));
     };
 
-    await Promise.all([fetchUser(), fetchSeshes()]);
+    await Promise.all([fetchUser(), fetchUserSeshes()]);
     setIsLoading(false);
   };
 
