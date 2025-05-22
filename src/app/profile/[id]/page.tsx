@@ -120,13 +120,13 @@ export default function Page() {
 
           <Divider mt={40} mb={30} />
 
-          <Text size="xl" c="gray.7" fw={700}>
+          <Text size="xl" fw={700}>
             {isCurrentUser
               ? "Your Seshes:"
               : `Your Seshes with ${user.firstName + " " + user.lastName}:`}
           </Text>
-          <Box mt={50}>
-            <Text size="lg" mb="sm" fw={700}>
+          <Box mt={30}>
+            <Text size="lg" c="gray.7" mb="sm" fw={700}>
               Upcoming
             </Text>
             {futureSeshes.map((sesh: Sesh) => (
@@ -139,7 +139,7 @@ export default function Page() {
             )}
           </Box>
           <Box mt={40}>
-            <Text size="lg" mb="sm" fw={700}>
+            <Text size="lg" c="gray.7" mb="sm" fw={700}>
               Past
             </Text>
             <Stack gap={0}>
