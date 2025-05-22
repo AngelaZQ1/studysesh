@@ -123,7 +123,7 @@ export default function Page() {
           <Text size="xl" fw={700}>
             {isCurrentUser
               ? "Your Seshes:"
-              : `Your Seshes with ${user.firstName + " " + user.lastName}:`}
+              : `${user.firstName + " " + user.lastName}'s Seshes:`}
           </Text>
           <Box mt={30}>
             <Text size="lg" c="gray.7" mb="sm" fw={700}>
@@ -133,7 +133,7 @@ export default function Page() {
               <ProfileSesh key={sesh.id} sesh={sesh} />
             ))}
             {futureSeshes.length === 0 && (
-              <Text size="sm" c="gray.6" mb="sm">
+              <Text size="sm" c="gray.5" mb="sm">
                 No upcoming Seshes
               </Text>
             )}
@@ -147,7 +147,7 @@ export default function Page() {
                 <ProfileSesh key={sesh.id} sesh={sesh} />
               ))}
               {pastSeshes.length === 0 && (
-                <Text size="sm" c="gray.6" mb="sm">
+                <Text size="sm" c="gray.5" mb="sm">
                   No past Seshes
                 </Text>
               )}

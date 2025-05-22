@@ -55,7 +55,7 @@ const useProfilePage = () => {
 
     const fetchUserSeshes = async () => {
       const idToken = await firebaseUser.getIdToken();
-      await dispatch(fetchSeshes({ idToken, userId: currentUser.id }));
+      await dispatch(fetchSeshes({ idToken, userId }));
     };
 
     await Promise.all([fetchUser(), fetchUserSeshes()]);
