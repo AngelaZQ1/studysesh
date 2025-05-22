@@ -8,6 +8,7 @@ import {
   Button,
   Center,
   Container,
+  Divider,
   Flex,
   Group,
   Loader,
@@ -116,29 +117,42 @@ export default function Page() {
               <Text size="xl">{user.firstName + " " + user.lastName}</Text>
             </Flex>
           )}
+
+          <Divider mt={40} mb={30} />
+
+          <Text size="xl" c="gray.7" fw={700}>
+            {isCurrentUser
+              ? "Your Seshes:"
+              : `Your Seshes with ${user.firstName + " " + user.lastName}:`}
+          </Text>
           <Box mt={50}>
-            <Text size="xl" mb="sm" fw={700}>
-              Upcoming Seshes
+            <Text size="lg" mb="sm" fw={700}>
+              Upcoming
             </Text>
             {futureSeshes.map((sesh: Sesh) => (
               <ProfileSesh key={sesh.id} sesh={sesh} />
             ))}
+            {futureSeshes.length === 0 && (
+              <Text size="sm" c="gray.6" mb="sm">
+                No upcoming Seshes
+              </Text>
+            )}
           </Box>
           <Box mt={40}>
-            <Text size="xl" mb="sm" fw={700}>
-              Past Seshes
+            <Text size="lg" mb="sm" fw={700}>
+              Past
             </Text>
             <Stack gap={0}>
               {pastSeshes.map((sesh: Sesh) => (
                 <ProfileSesh key={sesh.id} sesh={sesh} />
               ))}
+              {pastSeshes.length === 0 && (
+                <Text size="sm" c="gray.6" mb="sm">
+                  No past Seshes
+                </Text>
+              )}
             </Stack>
           </Box>
-          {futureSeshes.length === 0 && pastSeshes.length === 0 && (
-            <Text size="xl" c="gray.7" mt={30} fw={700}>
-              This user has no seshes!
-            </Text>
-          )}
         </>
       )}
     </Container>
