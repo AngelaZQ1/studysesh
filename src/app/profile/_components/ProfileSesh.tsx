@@ -5,9 +5,9 @@ import moment from "moment";
 import { FiCalendar, FiClock, FiMapPin } from "react-icons/fi";
 
 export default function ProfileSesh({ sesh }: { sesh: Sesh }) {
-  const { user } = useUserContext();
+  const { user: currentUser } = useUserContext();
 
-  if (!user) return;
+  if (!currentUser) return;
   return (
     <Card shadow="sm" padding="lg" mb="sm" radius="md" withBorder>
       <Flex key={sesh.id} justify="space-between" align="start" gap={10}>
@@ -42,20 +42,27 @@ export default function ProfileSesh({ sesh }: { sesh: Sesh }) {
               Owner
             </Text>
             <Flex align="center" gap={5}>
-              {sesh.owner.id === user.id ? (
-                <Avatar size="sm" color="pink">
-                  {sesh.owner.firstName[0].toUpperCase() +
-                    sesh.owner.lastName[0].toUpperCase()}
-                </Avatar>
+              {sesh.owner.id === currentUser.id ? (
+                <>
+                  <Avatar size="sm" color="pink">
+                    {sesh.owner.firstName[0].toUpperCase() +
+                      sesh.owner.lastName[0].toUpperCase()}
+                  </Avatar>
+                  <Text size="xs" fw={700}>
+                    YOU
+                  </Text>
+                </>
               ) : (
-                <Avatar size="sm">
-                  {sesh.owner.firstName[0].toUpperCase() +
-                    sesh.owner.lastName[0].toUpperCase()}
-                </Avatar>
+                <>
+                  <Avatar size="sm">
+                    {sesh.owner.firstName[0].toUpperCase() +
+                      sesh.owner.lastName[0].toUpperCase()}
+                  </Avatar>
+                  <Text size="xs">
+                    {sesh.owner.firstName + " " + sesh.owner.lastName}
+                  </Text>
+                </>
               )}
-              <Text size="sm">
-                {sesh.owner.firstName + " " + sesh.owner.lastName}
-              </Text>
             </Flex>
           </Box>
           {sesh.participants.length > 0 && (
@@ -66,18 +73,25 @@ export default function ProfileSesh({ sesh }: { sesh: Sesh }) {
               <Stack gap={7}>
                 {sesh.participants.map((p) => (
                   <Flex align="center" gap={5}>
-                    {p.id === user.id ? (
-                      <Avatar size="sm" color="pink">
-                        {p.firstName[0].toUpperCase() +
-                          p.lastName[0].toUpperCase()}
-                      </Avatar>
+                    {p.id === currentUser.id ? (
+                      <>
+                        <Avatar size="sm" color="pink">
+                          {p.firstName[0].toUpperCase() +
+                            p.lastName[0].toUpperCase()}
+                        </Avatar>
+                        <Text size="xs" fw={700}>
+                          YOU
+                        </Text>
+                      </>
                     ) : (
-                      <Avatar size="sm">
-                        {p.firstName[0].toUpperCase() +
-                          p.lastName[0].toUpperCase()}
-                      </Avatar>
+                      <>
+                        <Avatar size="sm">
+                          {p.firstName[0].toUpperCase() +
+                            p.lastName[0].toUpperCase()}
+                        </Avatar>
+                        <Text size="sm">{p.firstName + " " + p.lastName}</Text>
+                      </>
                     )}
-                    <Text size="sm">{p.firstName + " " + p.lastName}</Text>
                   </Flex>
                 ))}
               </Stack>
