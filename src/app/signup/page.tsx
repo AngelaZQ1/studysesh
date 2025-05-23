@@ -1,24 +1,28 @@
 "use client";
 import {
-  Stack,
-  Text,
+  Anchor,
   Button,
   Card,
   Center,
-  TextInput,
   Group,
+  Stack,
+  Text,
+  TextInput,
   Title,
-  Anchor,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { createUserWithEmailAndPassword } from "firebase/auth";
-import React from "react";
-import { auth } from "../../../firebase";
-import { useRouter } from "next/navigation";
-import Link from "next/link";
 import { notifications } from "@mantine/notifications";
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { auth } from "../../../firebase";
+import useUser from "../_hooks/useUser";
+import useUserContext from "../_hooks/useUserContext";
 
 export default function Page() {
+  const { createUser } = useUser();
+  const { setUser } = useUserContext();
+
   const router = useRouter();
   const form = useForm({
     initialValues: {
@@ -74,10 +78,8 @@ export default function Page() {
           email: values.email,
         };
 
-        await fetch("/api/user", {
-          method: "POST",
-          body: JSON.stringify({ ...requestBody }),
-        });
+        const newUser = await createUser(requestBody);
+        setUser(newUser);
 
         router.push("/dashboard");
 

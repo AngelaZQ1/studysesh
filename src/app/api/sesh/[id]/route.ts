@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 import { authAdmin } from "../../../../../firebaseAdmin";
 import prisma from "../../../../../prisma/client";
 
+// PUT api/sesh/[id]
 // Update a Sesh with the given id
 export async function PUT(request: Request) {
   try {

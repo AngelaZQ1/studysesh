@@ -3,18 +3,11 @@ import { notifications } from "@mantine/notifications";
 import moment from "moment";
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
-import { Sesh } from "../_types/types";
-import { createSesh, deleteSesh, updateSesh } from "../seshSlice";
-import useUser from "./useUser";
-import useUserContext from "./useUserContext";
-
-type User = {
-  firebaseUid: string;
-  id: number;
-  firstName: string;
-  lastName: string;
-  email: string;
-};
+import useUser from "../../_hooks/useUser";
+import useUserContext from "../../_hooks/useUserContext";
+import { Sesh, User } from "../../_types/types";
+import { createSesh, deleteSesh, updateSesh } from "../../_redux/seshSlice";
+import { AppDispatch } from "@/app/_redux/store";
 
 interface NewSeshModalProps {
   onSubmit: () => void;
@@ -24,7 +17,7 @@ interface NewSeshModalProps {
 const useNewSeshModal = ({ onSubmit, seshToEdit }: NewSeshModalProps) => {
   const { getAllUsers } = useUser();
   const { firebaseUser, user } = useUserContext();
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
 
   const [allUsers, setAllUsers] = useState<User[]>([]);
   const [selectedUserIds, setSelectedUserIds] = useState<string[]>([]);
@@ -101,7 +94,9 @@ const useNewSeshModal = ({ onSubmit, seshToEdit }: NewSeshModalProps) => {
     }
 
     setPopoverOpened(false);
-    dispatch(deleteSesh({ id: seshToEdit.id, idToken: seshToEdit.idToken }));
+    dispatch(
+      deleteSesh({ id: Number(seshToEdit.id), idToken: seshToEdit.idToken })
+    );
     notifications.show({
       title: "Success!",
       message: "Sesh successfully cancelled.",

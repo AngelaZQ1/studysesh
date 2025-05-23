@@ -9,6 +9,7 @@ export type Sesh = {
   location: string;
   virtual: boolean;
   ownerId: number;
+  owner: User;
   participants: dbUser[];
 };
 
