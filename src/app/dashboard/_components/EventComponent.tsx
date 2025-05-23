@@ -1,6 +1,6 @@
 import useUserContext from "@/app/_hooks/useUserContext";
 import { Sesh } from "@/app/_types/types";
-import { Box, Button, Flex, Popover, Stack, Text } from "@mantine/core";
+import { Box, Button, Flex, HoverCard, Stack, Text } from "@mantine/core";
 import moment from "moment";
 import { FiCalendar, FiClock, FiEdit3, FiMapPin } from "react-icons/fi";
 import { PiUsersBold } from "react-icons/pi";
@@ -20,11 +20,11 @@ const EventComponent = ({
   if (!user) return;
 
   return (
-    <Popover withArrow position="top" withinPortal>
-      <Popover.Target>
+    <HoverCard position="top" shadow="sm">
+      <HoverCard.Target>
         <Box p={5}>{event.title}</Box>
-      </Popover.Target>
-      <Popover.Dropdown maw={300}>
+      </HoverCard.Target>
+      <HoverCard.Dropdown maw={300}>
         <Stack gap={6}>
           <Text fw="bold" maw="100%">
             {event.title}
@@ -78,8 +78,8 @@ const EventComponent = ({
             </Button>
           ) : null}
         </Stack>
-      </Popover.Dropdown>
-    </Popover>
+      </HoverCard.Dropdown>
+    </HoverCard>
   );
 };
 
