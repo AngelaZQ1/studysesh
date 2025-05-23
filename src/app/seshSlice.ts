@@ -92,6 +92,4 @@ export const deleteSesh = createAsyncThunk(
   }
 );
 
-// export const { setSeshes } = seshSlice.actions;
-
 export default seshSlice.reducer;
