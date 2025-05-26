@@ -47,7 +47,7 @@ export default function NewSeshModal({
   });
 
   const handleFormSubmit = async (values: typeof form.values) => {
-    await handleSubmit(values);
+    seshToEdit ? await handleFormUpdate() : await handleSubmit(values);
     onSubmit();
   };
 
@@ -103,10 +103,14 @@ export default function NewSeshModal({
                 highlightToday
                 allowDeselect
               />
-              {form.errors.date && <Text c="red">{form.errors.date}</Text>}
+              {form.errors.date && (
+                <Text size="xs" fw={600} c="red">
+                  {form.errors.date}
+                </Text>
+              )}
 
               <Text size="xs" fw={600} mt="sm">
-                Time
+                Time <span style={{ color: "red" }}>*</span>
               </Text>
               <TimeInput
                 key={form.key("time")}
@@ -218,7 +222,7 @@ export default function NewSeshModal({
             </Button>
             {seshToEdit ? (
               <Button
-                onClick={handleFormUpdate}
+                type="submit"
                 variant="gradient"
                 gradient={{ from: "#FF9C67", to: "#FC6288", deg: 115 }}
               >
