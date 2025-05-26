@@ -5,7 +5,6 @@ export type Sesh = {
   title: string;
   start: Date;
   end: Date;
-  time: string;
   location: string;
   virtual: boolean;
   ownerId: number;
