@@ -17,12 +17,20 @@ const EventComponent = ({
     .map((p) => `${p.firstName} ${p.lastName}`)
     .join(", ");
 
+  const handleClick = (e: React.MouseEvent) => {
+    if (event.ownerId === user.id) {
+      handleEdit(event);
+    }
+  };
+
   if (!user) return;
 
   return (
-    <HoverCard position="top" shadow="sm">
+    <HoverCard position="top" shadow="sm" offset={12}>
       <HoverCard.Target>
-        <Box p={5}>{event.title}</Box>
+        <Box p={5} onClick={handleClick}>
+          {event.title}
+        </Box>
       </HoverCard.Target>
       <HoverCard.Dropdown maw={300}>
         <Stack gap={6}>
@@ -63,20 +71,6 @@ const EventComponent = ({
               </Flex>
             )}
           </Stack>
-
-          {event.ownerId === user.id ? (
-            <Button
-              variant="outline"
-              onClick={() => handleEdit(event)}
-              color="gray.5"
-              c="gray.6"
-              size="xs"
-              flex="0 0 auto"
-              leftSection={<FiEdit3 size={14} />}
-            >
-              Edit Sesh
-            </Button>
-          ) : null}
         </Stack>
       </HoverCard.Dropdown>
     </HoverCard>
