@@ -33,12 +33,11 @@ const useNewSeshModal = ({ onSubmit, seshToEdit }: NewSeshModalProps) => {
   useEffect(() => {
     if (seshToEdit) {
       fetchUsers();
+
       form.setValues({
         title: seshToEdit.title,
         date: new Date(seshToEdit.start),
-        time: seshToEdit.time
-          ? moment(seshToEdit.time, "h:mmA").format("HH:mm")
-          : undefined,
+        time: moment(seshToEdit.start).format("HH:mm"),
         locationString: seshToEdit.location,
         location: seshToEdit.virtual ? "virtual" : "inPerson",
         participantIds:
@@ -69,6 +68,7 @@ const useNewSeshModal = ({ onSubmit, seshToEdit }: NewSeshModalProps) => {
       title: (value) =>
         value.trim().length === 0 ? "Title is required" : null,
       date: (value) => (!value ? "Date is required" : null),
+      time: (value) => (!value ? "Time is required" : null),
       locationString: (value): string | null =>
         form.getValues().location === "inPerson" && value.trim().length === 0
           ? "Location cannot be empty"
@@ -174,10 +174,8 @@ const useNewSeshModal = ({ onSubmit, seshToEdit }: NewSeshModalProps) => {
     participantIds: string[];
   }) => {
     let start;
-    let time;
     // if time is provided, start = date + time
     if (values.time) {
-      time = values.time;
       start = new Date(
         values.date.getFullYear(),
         values.date.getMonth(),
@@ -187,7 +185,6 @@ const useNewSeshModal = ({ onSubmit, seshToEdit }: NewSeshModalProps) => {
     } else {
       // else start = date
       start = values.date;
-      time = undefined;
     }
     const end = new Date(start);
     end.setHours(end.getHours() + 1);
@@ -200,7 +197,6 @@ const useNewSeshModal = ({ onSubmit, seshToEdit }: NewSeshModalProps) => {
       title: values.title,
       start,
       end,
-      time,
       location,
       virtual,
       idToken,

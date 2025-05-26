@@ -8,7 +8,7 @@ import prisma from "../../../../../prisma/client";
 export async function PUT(request: Request) {
   try {
     const body = await request.json();
-    const { title, start, end, time, location, virtual, participantIds } = body;
+    const { title, start, end, location, virtual, participantIds } = body;
 
     const id = Number(request.url.split("/").pop());
     const idToken = request.headers.get("authorization")?.split("Bearer ")[1];
@@ -40,7 +40,6 @@ export async function PUT(request: Request) {
           title,
           start,
           end,
-          time,
           location: location || null,
           virtual,
           participants: {

@@ -9,7 +9,7 @@ import prisma from "../../../../prisma/client";
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { title, start, end, time, location, virtual, participantIds } = body;
+    const { title, start, end, location, virtual, participantIds } = body;
     const idToken = request.headers.get("authorization")?.split("Bearer ")[1];
 
     if (!idToken) {
@@ -42,7 +42,6 @@ export async function POST(request: Request) {
           title,
           start,
           end,
-          time,
           location: location || null,
           virtual,
           participants: {
@@ -108,6 +107,8 @@ export async function GET(request: Request) {
         },
         include: { participants: true, owner: true },
       });
+
+      console.log("SESHES", seshes);
 
       console.log("Seshes successfully retrieved", seshes);
       return NextResponse.json(seshes, { status: 200 });

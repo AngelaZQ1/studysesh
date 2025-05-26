@@ -20,14 +20,12 @@ export default function ProfileSesh({ sesh }: { sesh: Sesh }) {
                 {moment(sesh.start).format("dddd, MMMM D")}
               </Text>
             </Flex>
-            {sesh.time && (
-              <Flex gap={3} align="center">
-                <FiClock color="gray" size={16} />
-                <Text size="sm" c="gray.7">
-                  {moment(sesh.time, "HH:mm").format("h:mmA")}
-                </Text>
-              </Flex>
-            )}
+            <Flex gap={3} align="center">
+              <FiClock color="gray" size={16} />
+              <Text size="sm" c="gray.7">
+                {moment(sesh.start).format("h:mmA")}
+              </Text>
+            </Flex>
             <Flex gap={3} align="center">
               <FiMapPin color="gray" size={16} style={{ flexShrink: "0" }} />
               <Text size="sm" c="gray.7">
