@@ -1,7 +1,7 @@
 "use client";
 import { Button, Card, Group, Stack, Text } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useDispatch } from "react-redux";
 import usePusher from "../_hooks/usePusher";
 import useUserContext from "../_hooks/useUserContext";
@@ -10,15 +10,32 @@ import NewSeshModal from "./_components/NewSeshModal";
 import SeshCalendar from "./_components/SeshCalendar";
 import { fetchSeshes } from "../_redux/seshSlice";
 import { AppDispatch } from "../_redux/store";
+import { useRouter } from "next/navigation";
+import { notifications } from "@mantine/notifications";
 
 export default function Dashboard() {
+  const router = useRouter();
   const { firebaseUser, user } = useUserContext();
   usePusher();
   const [opened, { open, close }] = useDisclosure(false);
   const [seshToEdit, setSeshToEdit] = useState<Sesh | null>(null);
   const dispatch = useDispatch<AppDispatch>();
+  const effectRan = useRef(false); // to prevent useEffect running twice
 
   useEffect(() => {
+    if (effectRan.current) return;
+    effectRan.current = true;
+
+    if (!firebaseUser) {
+      router.push("/login");
+      notifications.show({
+        title: "Error",
+        message: "Please log in.",
+        autoClose: 5000,
+        color: "pink",
+      });
+      return;
+    }
     firebaseUser.getIdToken().then((idToken) => {
       dispatch(fetchSeshes({ idToken, userId: user.id }));
     });
