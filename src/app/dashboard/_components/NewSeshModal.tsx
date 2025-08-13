@@ -47,7 +47,11 @@ export default function NewSeshModal({
   });
 
   const handleFormSubmit = async (values: typeof form.values) => {
-    seshToEdit ? await handleFormUpdate() : await handleSubmit(values);
+    if (seshToEdit) {
+      await handleFormUpdate();
+    } else {
+      await handleSubmit(values);
+    }
     onSubmit();
   };
 

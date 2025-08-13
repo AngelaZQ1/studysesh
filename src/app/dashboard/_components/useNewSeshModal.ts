@@ -1,3 +1,4 @@
+import { AppDispatch } from "@/app/_redux/store";
 import { useForm } from "@mantine/form";
 import { notifications } from "@mantine/notifications";
 import moment from "moment";
@@ -5,9 +6,8 @@ import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import useUser from "../../_hooks/useUser";
 import useUserContext from "../../_hooks/useUserContext";
-import { Sesh, User } from "../../_types/types";
 import { createSesh, deleteSesh, updateSesh } from "../../_redux/seshSlice";
-import { AppDispatch } from "@/app/_redux/store";
+import { Sesh, User } from "../../_types/types";
 
 interface NewSeshModalProps {
   onSubmit: () => void;
@@ -94,7 +94,7 @@ const useNewSeshModal = ({ onSubmit, seshToEdit }: NewSeshModalProps) => {
     }
 
     setPopoverOpened(false);
-    dispatch(
+    await dispatch(
       deleteSesh({ id: Number(seshToEdit.id), idToken: seshToEdit.idToken })
     );
     notifications.show({
@@ -150,7 +150,7 @@ const useNewSeshModal = ({ onSubmit, seshToEdit }: NewSeshModalProps) => {
     form.validate();
 
     const requestBody = await getRequestBody(values);
-    dispatch(
+    await dispatch(
       createSesh({ newSesh: requestBody, idToken: requestBody.idToken })
     );
 
