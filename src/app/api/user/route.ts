@@ -50,10 +50,10 @@ export async function GET(request: Request) {
 
   if (idParam) {
     const id = Number(idParam);
-    if (!isNaN(id)) {
-      user = await prisma.user.findUnique({ where: { id } });
-    } else {
+    if (isNaN(id)) {
       return NextResponse.json({ error: "Invalid ID" }, { status: 400 });
+    } else {
+      user = await prisma.user.findUnique({ where: { id } });
     }
   } else if (uid) {
     user = await prisma.user.findUnique({ where: { firebaseUid: uid } });
