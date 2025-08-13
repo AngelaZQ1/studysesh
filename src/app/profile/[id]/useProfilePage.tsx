@@ -58,7 +58,11 @@ const useProfilePage = () => {
       await dispatch(fetchSeshes({ idToken, userId }));
     };
 
-    await Promise.all([fetchUser(), fetchUserSeshes()]);
+    await fetchUser();
+    if (user) {
+      await fetchUserSeshes();
+    }
+
     setIsLoading(false);
   };
 
