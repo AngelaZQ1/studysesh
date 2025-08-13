@@ -1,6 +1,6 @@
 "use client";
 
-import { Anchor, Avatar, Button, Flex, Menu, Text } from "@mantine/core";
+import { Avatar, Button, Flex, Menu, Text } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
 import { getAuth, signOut } from "firebase/auth";
 import Image from "next/image";
@@ -50,11 +50,7 @@ export default function NavBar() {
         <Image src={logo} alt="logo" width={45} />
 
         <Flex align="center" gap={50}>
-          <Link href="/dashboard">
-            <Anchor size="md" c="gray.7" underline="hover">
-              Dashboard
-            </Anchor>
-          </Link>
+          <Link href="/dashboard">Dashboard</Link>
           {user && (
             <Flex align="center">
               <Avatar color="pink" radius="xl" size={30}>
