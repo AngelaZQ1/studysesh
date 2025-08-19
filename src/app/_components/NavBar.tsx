@@ -20,6 +20,7 @@ export default function NavBar() {
   };
 
   const handleLogOut = () => {
+    router.push("/login");
     const auth = getAuth();
     signOut(auth)
       .then(() => {
@@ -29,7 +30,6 @@ export default function NavBar() {
           autoClose: 5000,
           color: "pink",
         });
-        router.push("/login");
         setFirebaseUser(null);
         setUser(null);
       })
