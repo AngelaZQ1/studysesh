@@ -52,7 +52,6 @@ export default function NewSeshModal({
     } else {
       await handleSubmit(values);
     }
-    onSubmit();
   };
 
   const handleFormUpdate = async () => {
@@ -66,7 +65,6 @@ export default function NewSeshModal({
       return;
     }
     await handleUpdate({ ...form.values, id: seshToEdit.id });
-    onSubmit();
   };
 
   return (

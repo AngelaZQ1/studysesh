@@ -120,7 +120,7 @@ const useNewSeshModal = ({ onSubmit, seshToEdit }: NewSeshModalProps) => {
     form.validate();
 
     const requestBody = await getRequestBody(values);
-    dispatch(
+    await dispatch(
       updateSesh({
         id: Number(values.id),
         updatedSesh: requestBody,
