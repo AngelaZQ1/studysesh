@@ -13,7 +13,7 @@ import classes from "./NavBar.module.css";
 
 export default function NavBar() {
   const router = useRouter();
-  const { setFirebaseUser, setUser, user } = useUserContext();
+  const { setFirebaseUser, user } = useUserContext();
 
   const navigateProfilePage = () => {
     router.push(`/profile/${user?.id}`);
