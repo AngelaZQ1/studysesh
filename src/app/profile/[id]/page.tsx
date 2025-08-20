@@ -159,7 +159,7 @@ export default function Page() {
         )}
       </Container>
       {isCurrentUser && (
-        <Container w={"40%"}>
+        <Container w={"35%"}>
           <Friends />
         </Container>
       )}

@@ -3,9 +3,12 @@ import { Card, Tabs } from "@mantine/core";
 
 export default function Friends() {
   return (
-    <Card shadow="md" padding="md" radius="md">
-      <Tabs defaultValue="friends" color="pink" p={10}>
-        <Tabs.List mb={20}>
+    <Card shadow="sm" padding="md" radius="md" withBorder>
+      <Tabs defaultValue="friends" color="pink" p={5}>
+        <Tabs.List
+          mb={20}
+          style={{ display: "flex", justifyContent: "space-between" }}
+        >
           <Tabs.Tab value="friends">Your Friends</Tabs.Tab>
           <Tabs.Tab value="add">Add Friend</Tabs.Tab>
           <Tabs.Tab value="pending">Pending</Tabs.Tab>
