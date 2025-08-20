@@ -31,7 +31,6 @@ export default function NavBar() {
           color: "pink",
         });
         setFirebaseUser(null);
-        setUser(null);
       })
       .catch((error) => {
         notifications.show({
