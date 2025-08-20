@@ -14,13 +14,19 @@ datasource db {
 }
 
 model User {
-  firebaseUid         String @unique // Firebase UID to link Firebase Auth to this user
-  id                  Int    @id @default(autoincrement())
-  firstName           String
-  lastName            String
-  email               String @unique
+  firebaseUid String @unique // Firebase UID to link Firebase Auth to this user
+  id          Int    @id @default(autoincrement())
+  firstName   String
+  lastName    String
+  email       String @unique
+
+  friends  User[] @relation("UserFriends")
+  friendOf User[] @relation("UserFriends")
+
+  sentFriendRequests     FriendRequest[] @relation("SentFriendRequests")
+  receivedFriendRequests FriendRequest[] @relation("ReceivedFriendRequests")
+
   seshes              Sesh[]
-  // Inverse relation for the participants
   seshesAsParticipant Sesh[] @relation("SeshParticipants")
 }
 
@@ -34,4 +40,12 @@ model Sesh {
   ownerId      Int
   owner        User     @relation(fields: [ownerId], references: [id])
   participants User[]   @relation("SeshParticipants")
+}
+
+model FriendRequest {
+  id          Int  @id @default(autoincrement())
+  sender      User @relation("SentFriendRequests", fields: [senderId], references: [id])
+  senderId    Int
+  recipient   User @relation("ReceivedFriendRequests", fields: [recipientId], references: [id])
+  recipientId Int
 }
