@@ -1,3 +1,4 @@
+import { withAuth } from "@/app/lib/withAuth";
 import { NextResponse } from "next/server";
 import prisma from "../../../../prisma/client";
 
@@ -70,7 +71,7 @@ export async function POST(request: Request) {
 
 // PUT /api/user
 // Updates the user with the given id
-export async function PUT(request: Request) {
+export const PUT = withAuth(async (request: Request) => {
   try {
     const body = await request.json();
     const { id, firstName, lastName, email } = body;
@@ -95,4 +96,4 @@ export async function PUT(request: Request) {
       { status: 500 }
     );
   }
-}
+});

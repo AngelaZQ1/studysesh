@@ -12,12 +12,6 @@ const useUser = () => {
       body: JSON.stringify({ ...requestBody }),
     });
     const user = await res.json();
-    if (res.status === 201) {
-      console.log("User successfully created", user);
-    }
-    if (res.status === 400) {
-      console.error("Error creating user", user);
-    }
     return user;
   };
 
@@ -39,16 +33,18 @@ const useUser = () => {
     return users;
   };
 
-  const updateUser = async (requestBody: User) => {
+  const updateUser = async (requestBody: User, idToken: string) => {
     const res = await fetch(`/api/user?id=${requestBody.id}`, {
       method: "PUT",
       body: JSON.stringify({ ...requestBody }),
+      headers: {
+        Authorization: `Bearer ${idToken}`,
+      },
     });
-    const user = await res.json();
-    if (res.status === 400) {
-      console.error("Error updating user", user);
+    if (res.ok) {
+      const user = await res.json();
+      return user;
     }
-    return user;
   };
 
   return { createUser, getAllUsers, getUserByUid, getUserById, updateUser };
