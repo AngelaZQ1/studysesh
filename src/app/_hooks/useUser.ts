@@ -44,7 +44,7 @@ const useUser = () => {
   };
 
   const updateUser = async (requestBody: User, idToken: string) => {
-    const res = await fetch(`/api/user?id=${requestBody.id}`, {
+    const res = await fetch(`/api/user/${requestBody.id}`, {
       method: "PUT",
       body: JSON.stringify({ ...requestBody }),
       headers: {
