@@ -46,7 +46,8 @@ const useProfilePage = () => {
 
   const fetchUserAndSeshes = async () => {
     const fetchUser = async () => {
-      const res = await getUserById({ id: userId });
+      const idToken = await firebaseUser.getIdToken();
+      const res = await getUserById({ id: userId, idToken });
       if (res.error) {
         setUser(null);
       } else {

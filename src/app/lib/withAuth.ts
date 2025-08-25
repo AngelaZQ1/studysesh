@@ -14,7 +14,7 @@ export function withAuth<
 
     try {
       const decodedToken = await authAdmin.verifyIdToken(token);
-      return handler(req, decodedToken.toString());
+      return handler(req, decodedToken.uid);
     } catch (err) {
       console.error("Auth failed:", err);
       return NextResponse.json({ error: "Invalid token" }, { status: 401 });
