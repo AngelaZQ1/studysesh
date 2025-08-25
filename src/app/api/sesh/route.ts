@@ -1,23 +1,15 @@
+import { withAuth } from "@/app/lib/withAuth";
 import { pusherServer } from "@/app/pusher";
 import { Sesh } from "@prisma/client";
 import { NextResponse } from "next/server";
-import { authAdmin } from "../../../../firebaseAdmin";
 import prisma from "../../../../prisma/client";
 
 // POST api/sesh
 // Create a new Sesh
-export async function POST(request: Request) {
+export const POST = withAuth(async (request: Request, uid: string) => {
   try {
     const body = await request.json();
     const { title, start, end, location, virtual, participantIds } = body;
-    const idToken = request.headers.get("authorization")?.split("Bearer ")[1];
-
-    if (!idToken) {
-      return NextResponse.json(
-        { error: "idToken is required." },
-        { status: 400 }
-      );
-    }
 
     if (!title || virtual === null) {
       return NextResponse.json(
@@ -27,9 +19,6 @@ export async function POST(request: Request) {
     }
 
     try {
-      const decodedToken = await authAdmin.verifyIdToken(idToken);
-      const uid = decodedToken.uid;
-
       const ownerId = await prisma.user
         .findUnique({ where: { firebaseUid: uid } })
         .then((user) => {
@@ -74,19 +63,14 @@ export async function POST(request: Request) {
       { status: 500 }
     );
   }
-}
+});
 
 // GET api/sesh?userId=1
 // Get all Seshes that the user with the given id is a part of
-export async function GET(request: Request) {
+export const GET = withAuth(async (request: Request) => {
   try {
     const { searchParams } = new URL(request.url);
     const userIdParam = searchParams.get("userId");
-    const idToken = request.headers.get("authorization")?.split("Bearer ")[1];
-
-    if (!idToken) {
-      return NextResponse.json({ error: "Missing idToken." }, { status: 400 });
-    }
 
     if (!userIdParam) {
       return NextResponse.json({ error: "Missing userId." }, { status: 400 });
@@ -99,16 +83,12 @@ export async function GET(request: Request) {
     }
 
     try {
-      authAdmin.verifyIdToken(idToken);
-
       const seshes: Sesh[] = await prisma.sesh.findMany({
         where: {
           OR: [{ ownerId: userId }, { participants: { some: { id: userId } } }],
         },
         include: { participants: true, owner: true },
       });
-
-      console.log("SESHES", seshes);
 
       console.log("Seshes successfully retrieved", seshes);
       return NextResponse.json(seshes, { status: 200 });
@@ -126,4 +106,4 @@ export async function GET(request: Request) {
       { status: 500 }
     );
   }
-}
+});
