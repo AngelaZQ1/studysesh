@@ -12,7 +12,10 @@ export const PUT = withAuth(async (request: Request, uid: string) => {
   const id = Number(request.url.split("/").pop());
 
   if (!id) {
-    return NextResponse.json({ error: "Missing Sesh id." }, { status: 400 });
+    return NextResponse.json(
+      { error: "Missing or invalid Sesh id." },
+      { status: 400 }
+    );
   }
 
   try {
