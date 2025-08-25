@@ -2,31 +2,25 @@ import { pusherServer } from "@/app/pusher";
 import { NextResponse } from "next/server";
 import { authAdmin } from "../../../../../firebaseAdmin";
 import prisma from "../../../../../prisma/client";
+import { verifySession } from "@/app/lib/dal";
 
 // PUT api/sesh/[id]
 // Update a Sesh with the given id
 export async function PUT(request: Request) {
+  const session = await verifySession();
   try {
     const body = await request.json();
     const { title, start, end, location, virtual, participantIds } = body;
 
     const id = Number(request.url.split("/").pop());
-    const idToken = request.headers.get("authorization")?.split("Bearer ")[1];
-
-    if (!idToken) {
-      return NextResponse.json({ error: "Missing idToken." }, { status: 400 });
-    }
 
     if (!id) {
       return NextResponse.json({ error: "Missing Sesh id." }, { status: 400 });
     }
 
     try {
-      const decodedToken = await authAdmin.verifyIdToken(idToken);
-      const uid = decodedToken.uid;
-
       const ownerId = await prisma.user
-        .findUnique({ where: { firebaseUid: uid } })
+        .findUnique({ where: { firebaseUid: session.uid } })
         .then((user) => {
           if (!user) throw new Error("User not found");
           return user.id;

@@ -1,6 +1,36 @@
 import { NextResponse } from "next/server";
 import prisma from "../../../../prisma/client";
 
+// GET /api/user
+// Gets the user with the given id or uid
+// If no id or uid is provided, returns all users
+export async function GET(request: Request) {
+  const { searchParams } = new URL(request.url);
+  const idParam = searchParams.get("id");
+  const uid = searchParams.get("uid");
+
+  let user = null;
+
+  if (idParam) {
+    const id = Number(idParam);
+    if (isNaN(id)) {
+      return NextResponse.json({ error: "Invalid ID" }, { status: 400 });
+    } else {
+      user = await prisma.user.findUnique({ where: { id } });
+    }
+  } else if (uid) {
+    user = await prisma.user.findUnique({ where: { firebaseUid: uid } });
+  } else {
+    user = await prisma.user.findMany();
+  }
+
+  if (!user) {
+    return NextResponse.json({ error: "User not found" }, { status: 404 });
+  }
+
+  return NextResponse.json(user);
+}
+
 // POST /api/user
 // Creates a new user
 export async function POST(request: Request) {
@@ -36,36 +66,6 @@ export async function POST(request: Request) {
       { status: 500 }
     );
   }
-}
-
-// GET /api/user
-// Gets the user with the given id or uid
-// If no id or uid is provided, returns all users
-export async function GET(request: Request) {
-  const { searchParams } = new URL(request.url);
-  const idParam = searchParams.get("id");
-  const uid = searchParams.get("uid");
-
-  let user = null;
-
-  if (idParam) {
-    const id = Number(idParam);
-    if (isNaN(id)) {
-      return NextResponse.json({ error: "Invalid ID" }, { status: 400 });
-    } else {
-      user = await prisma.user.findUnique({ where: { id } });
-    }
-  } else if (uid) {
-    user = await prisma.user.findUnique({ where: { firebaseUid: uid } });
-  } else {
-    user = await prisma.user.findMany();
-  }
-
-  if (!user) {
-    return NextResponse.json({ error: "User not found" }, { status: 404 });
-  }
-
-  return NextResponse.json(user);
 }
 
 // PUT /api/user
