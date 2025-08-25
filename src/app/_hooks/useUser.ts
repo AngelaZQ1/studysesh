@@ -16,19 +16,29 @@ const useUser = () => {
   };
 
   const getUserByUid = async (requestBody: { firebaseUid: string }) => {
-    const res = await fetch(`/api/user?uid=${requestBody.firebaseUid}`, {});
+    const res = await fetch(`/api/user/uid/${requestBody.firebaseUid}`, {});
     const user = await res.json();
     return user;
   };
 
-  const getUserById = async (requestBody: { id: number }) => {
-    const res = await fetch(`/api/user?id=${requestBody.id}`, {});
+  const getUserById = async (requestBody: { id: number; idToken: string }) => {
+    const res = await fetch(`/api/user/${requestBody.id}`, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${requestBody.idToken}`,
+      },
+    });
     const user = await res.json();
     return user;
   };
 
-  const getAllUsers = async () => {
-    const res = await fetch(`/api/user`, { method: "GET" });
+  const getAllUsers = async (requestBody: { idToken: string }) => {
+    const res = await fetch(`/api/user`, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${requestBody.idToken}`,
+      },
+    });
     const users = await res.json();
     return users;
   };
