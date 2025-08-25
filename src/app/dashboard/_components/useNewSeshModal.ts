@@ -24,7 +24,8 @@ const useNewSeshModal = ({ onSubmit, seshToEdit }: NewSeshModalProps) => {
   const [popoverOpened, setPopoverOpened] = useState(false);
 
   const fetchUsers = async () => {
-    const users = await getAllUsers();
+    const idToken = await firebaseUser.getIdToken();
+    const users = await getAllUsers({ idToken });
     const otherUsers = users.filter((u: User) => u.id !== user.id);
     setAllUsers(otherUsers);
   };

@@ -16,6 +16,7 @@ const useProfilePage = () => {
     setUser: setCurrentUser,
   } = useUserContext();
   const { updateUser } = useUser();
+
   const dispatch = useDispatch<AppDispatch>();
   const { seshes } = useSelector((state) => state.sesh);
 
@@ -45,7 +46,8 @@ const useProfilePage = () => {
 
   const fetchUserAndSeshes = async () => {
     const fetchUser = async () => {
-      const res = await getUserById({ id: userId });
+      const idToken = await firebaseUser.getIdToken();
+      const res = await getUserById({ id: userId, idToken });
       if (res.error) {
         setUser(null);
       } else {
@@ -79,7 +81,8 @@ const useProfilePage = () => {
       firstName,
       lastName,
     };
-    const user = await updateUser(updatedUser);
+    const idToken = await firebaseUser.getIdToken();
+    const user = await updateUser(updatedUser, idToken);
     setCurrentUser(user);
     setIsEditing(false);
     notifications.show({
