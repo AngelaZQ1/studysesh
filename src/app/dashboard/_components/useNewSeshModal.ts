@@ -95,8 +95,9 @@ const useNewSeshModal = ({ onSubmit, seshToEdit }: NewSeshModalProps) => {
     }
 
     setPopoverOpened(false);
+    const idToken = await firebaseUser.getIdToken();
     await dispatch(
-      deleteSesh({ id: Number(seshToEdit.id), idToken: seshToEdit.idToken })
+      deleteSesh({ id: Number(seshToEdit.id), idToken })
     );
     notifications.show({
       title: "Success!",
