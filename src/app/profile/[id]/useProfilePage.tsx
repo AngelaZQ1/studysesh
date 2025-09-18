@@ -18,7 +18,7 @@ const useProfilePage = () => {
   const { updateUser } = useUser();
 
   const dispatch = useDispatch<AppDispatch>();
-  const { seshes } = useSelector((state) => state.sesh);
+  const { seshes } = useSelector((state: any) => state.sesh);
 
   const { getUserById } = useUser();
   const [user, setUser] = useState<User | null>(null);
@@ -56,8 +56,7 @@ const useProfilePage = () => {
     };
 
     const fetchUserSeshes = async () => {
-      const idToken = await firebaseUser.getIdToken();
-      await dispatch(fetchSeshes({ idToken, userId }));
+      await dispatch(fetchSeshes({ userId }));
     };
 
     await fetchUser();

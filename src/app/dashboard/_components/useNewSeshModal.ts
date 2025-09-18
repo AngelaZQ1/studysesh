@@ -42,7 +42,8 @@ const useNewSeshModal = ({ onSubmit, seshToEdit }: NewSeshModalProps) => {
         locationString: seshToEdit.location,
         location: seshToEdit.virtual ? "virtual" : "inPerson",
         participantIds:
-          seshToEdit.participants.map((p: User) => p.id.toString()) || [],
+          seshToEdit.participants.map((p: { id: number }) => p.id.toString()) ||
+          [],
       });
     }
   }, [seshToEdit]);
@@ -95,10 +96,7 @@ const useNewSeshModal = ({ onSubmit, seshToEdit }: NewSeshModalProps) => {
     }
 
     setPopoverOpened(false);
-    const idToken = await firebaseUser.getIdToken();
-    await dispatch(
-      deleteSesh({ id: Number(seshToEdit.id), idToken })
-    );
+    await dispatch(deleteSesh({ id: Number(seshToEdit.id) }));
     notifications.show({
       title: "Success!",
       message: "Sesh successfully cancelled.",
@@ -126,7 +124,6 @@ const useNewSeshModal = ({ onSubmit, seshToEdit }: NewSeshModalProps) => {
       updateSesh({
         id: Number(values.id),
         updatedSesh: requestBody,
-        idToken: requestBody.idToken,
       })
     );
 
@@ -152,9 +149,7 @@ const useNewSeshModal = ({ onSubmit, seshToEdit }: NewSeshModalProps) => {
     form.validate();
 
     const requestBody = await getRequestBody(values);
-    await dispatch(
-      createSesh({ newSesh: requestBody, idToken: requestBody.idToken })
-    );
+    await dispatch(createSesh({ newSesh: requestBody }));
 
     notifications.show({
       title: "Success!",
@@ -193,7 +188,6 @@ const useNewSeshModal = ({ onSubmit, seshToEdit }: NewSeshModalProps) => {
 
     const virtual = values.location === "virtual";
     const location = virtual ? null : values.locationString;
-    const idToken = await firebaseUser.getIdToken();
 
     const requestBody = {
       title: values.title,
@@ -201,7 +195,6 @@ const useNewSeshModal = ({ onSubmit, seshToEdit }: NewSeshModalProps) => {
       end,
       location,
       virtual,
-      idToken,
       participantIds: values.participantIds.map((id) => Number(id)),
     };
 

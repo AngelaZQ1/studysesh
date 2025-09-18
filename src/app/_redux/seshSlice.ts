@@ -1,11 +1,17 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
+const getIdToken = async (getState: () => any) => {
+  const state = getState();
+  const firebaseUser = state.auth.firebaseUser;
+  return await firebaseUser.getIdToken();
+};
+
 export const seshSlice = createSlice({
   name: "sesh",
   initialState: {
     seshes: [],
-    status: "idle",
-    error: null,
+    status: "idle" as "idle" | "pending" | "succeeded" | "failed",
+    error: null as string | null,
   },
   reducers: {},
   extraReducers: (builder) => {
@@ -20,74 +26,90 @@ export const seshSlice = createSlice({
       })
       .addCase(fetchSeshes.rejected, (state, action) => {
         state.status = "failed";
-        state.error = action.error.message ?? "Unknown Error";
+        // if rejectWithValue was used to pass a specific error message
+        if (action.payload) {
+          state.error = action.payload as string;
+        } else {
+          state.error = action.error.message ?? "Unknown Error";
+        }
       });
   },
 });
 
 export const fetchSeshes = createAsyncThunk(
   "seshes/fetchSeshes",
-  async (data: { idToken: string; userId: number }) => {
+  async (data: { userId: number }, { rejectWithValue, getState }) => {
     try {
+      const idToken = await getIdToken(getState);
       const res = await fetch(`/api/sesh?userId=${data.userId}`, {
         headers: {
-          Authorization: `Bearer ${data.idToken}`,
+          Authorization: `Bearer ${idToken}`,
         },
       });
       const seshes = await res.json();
       return seshes;
     } catch (err) {
       console.error(err);
+      return rejectWithValue(err);
     }
   }
 );
 
 export const createSesh = createAsyncThunk(
   "seshes/createSesh",
-  async (data: { newSesh; idToken: string }) => {
+  async (data: { newSesh: any }, { rejectWithValue, getState }) => {
     try {
+      const idToken = await getIdToken(getState);
       await fetch("/api/sesh", {
         method: "POST",
         body: JSON.stringify({ ...data.newSesh }),
         headers: {
-          Authorization: `Bearer ${data.idToken}`,
+          Authorization: `Bearer ${idToken}`,
         },
       });
     } catch (err) {
       console.error(err);
+      return rejectWithValue(err);
     }
   }
 );
 
 export const updateSesh = createAsyncThunk(
   "seshes/updateSesh",
-  async (data: { id: number; updatedSesh; idToken: string }) => {
+  async (
+    data: { id: number; updatedSesh: any },
+    { rejectWithValue, getState }
+  ) => {
     try {
+      const idToken = await getIdToken(getState);
       await fetch(`/api/sesh/${data.id}`, {
         method: "PUT",
         body: JSON.stringify({ ...data.updatedSesh }),
         headers: {
-          Authorization: `Bearer ${data.idToken}`,
+          Authorization: `Bearer ${idToken}`,
         },
       });
     } catch (err) {
       console.error(err);
+      return rejectWithValue(err);
     }
   }
 );
 
 export const deleteSesh = createAsyncThunk(
   "seshes/deleteSesh",
-  async (data: { id: number; idToken: string }) => {
+  async (data: { id: number }, { rejectWithValue, getState }) => {
     try {
+      const idToken = await getIdToken(getState);
       await fetch(`/api/sesh/${data.id}`, {
         method: "DELETE",
         headers: {
-          Authorization: `Bearer ${data.idToken}`,
+          Authorization: `Bearer ${idToken}`,
         },
       });
     } catch (err) {
       console.error(err);
+      return rejectWithValue(err);
     }
   }
 );

@@ -1,17 +1,17 @@
 "use client";
 import { Button, Card, Group, Stack, Text } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
+import { notifications } from "@mantine/notifications";
+import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { useDispatch } from "react-redux";
 import usePusher from "../_hooks/usePusher";
 import useUserContext from "../_hooks/useUserContext";
+import { fetchSeshes } from "../_redux/seshSlice";
+import { AppDispatch } from "../_redux/store";
 import { Sesh } from "../_types/types";
 import NewSeshModal from "./_components/NewSeshModal";
 import SeshCalendar from "./_components/SeshCalendar";
-import { fetchSeshes } from "../_redux/seshSlice";
-import { AppDispatch } from "../_redux/store";
-import { useRouter } from "next/navigation";
-import { notifications } from "@mantine/notifications";
 
 export default function Dashboard() {
   const router = useRouter();
@@ -36,15 +36,11 @@ export default function Dashboard() {
       });
       return;
     }
-    firebaseUser.getIdToken().then((idToken) => {
-      dispatch(fetchSeshes({ idToken, userId: user.id }));
-    });
+    dispatch(fetchSeshes({ userId: user.id }));
   }, []);
 
   const handleSubmit = async () => {
-    firebaseUser.getIdToken().then((idToken) => {
-      dispatch(fetchSeshes({ idToken, userId: user.id }));
-    });
+    await dispatch(fetchSeshes({ userId: user.id }));
     setSeshToEdit(null);
     close();
   };
