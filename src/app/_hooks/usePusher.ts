@@ -1,13 +1,13 @@
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
+import { fetchSeshes } from "../_redux/seshSlice";
+import { AppDispatch } from "../_redux/store";
+import { Sesh } from "../_types/types";
 import { pusherClient } from "../pusher";
 import useUserContext from "./useUserContext";
-import { fetchSeshes } from "../_redux/seshSlice";
-import { Sesh } from "../_types/types";
-import { AppDispatch } from "../_redux/store";
 
 const usePusher = () => {
-  const { firebaseUser, user } = useUserContext();
+  const { user } = useUserContext();
   const dispatch = useDispatch<AppDispatch>();
 
   useEffect(() => {
@@ -15,25 +15,19 @@ const usePusher = () => {
 
     pusherClient.bind("new-sesh", (sesh: Sesh) => {
       if (sesh.participants.some((p) => p.id === user.id)) {
-        firebaseUser.getIdToken().then((idToken) => {
-          dispatch(fetchSeshes({ idToken, userId: user.id }));
-        });
+        dispatch(fetchSeshes({ userId: user.id }));
       }
     });
 
     pusherClient.bind("update-sesh", (sesh: Sesh) => {
       if (sesh.participants.some((p) => p.id === user.id)) {
-        firebaseUser.getIdToken().then((idToken) => {
-          dispatch(fetchSeshes({ idToken, userId: user.id }));
-        });
+        dispatch(fetchSeshes({ userId: user.id }));
       }
     });
 
     pusherClient.bind("delete-sesh", (sesh: Sesh) => {
       if (sesh.participants.some((p) => p.id === user.id)) {
-        firebaseUser.getIdToken().then((idToken) => {
-          dispatch(fetchSeshes({ idToken, userId: user.id }));
-        });
+        dispatch(fetchSeshes({ userId: user.id }));
       }
     });
 
