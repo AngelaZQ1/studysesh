@@ -1,8 +1,11 @@
+import useFriendRequest from "@/app/_hooks/useFriendRequest";
 import useUser from "@/app/_hooks/useUser";
 import useUserContext from "@/app/_hooks/useUserContext";
+import { UserPlusIcon } from "@heroicons/react/16/solid";
 import {
   Avatar,
   Box,
+  Button,
   Card,
   Center,
   Group,
@@ -23,8 +26,9 @@ interface User {
 }
 
 export default function AddFriendTab() {
-  const { firebaseUser } = useUserContext();
+  const { firebaseUser, user } = useUserContext();
   const { searchUsers } = useUser();
+  const { createFriendRequest } = useFriendRequest();
 
   const [search, setSearch] = useState("");
   const [searchResult, setSearchResult] = useState<SearchResult | null>(null);
@@ -41,6 +45,15 @@ export default function AddFriendTab() {
     }, 300);
     return () => clearTimeout(timer);
   }, [firebaseUser, search]);
+
+  const handleAdd = async (otherUserId: number) => {
+    const idToken = await firebaseUser.getIdToken();
+    await createFriendRequest({
+      senderId: user.id,
+      recipientId: otherUserId,
+      idToken,
+    });
+  };
 
   return (
     <Box>
@@ -80,6 +93,17 @@ export default function AddFriendTab() {
                   ></Avatar>
                   <Text size="sm">{user.firstName + " " + user.lastName}</Text>
                 </Group>
+                <Button
+                  size="xs"
+                  variant="default"
+                  px="xs"
+                  onClick={() => handleAdd(user.id)}
+                >
+                  <Group gap="4" mt="2">
+                    <UserPlusIcon className="size-4" />
+                    Add
+                  </Group>
+                </Button>
               </Group>
             </Card>
           ))}
