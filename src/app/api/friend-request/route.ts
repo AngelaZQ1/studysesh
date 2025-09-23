@@ -6,7 +6,7 @@ import prisma from "../../../../prisma/client";
  * @route POST /api/friend-request
  * @description Create a new friend request with a given sender and recipient
  * @body {number} body.senderId - ID of the sender
- * @body {number} body.recipientㅑd - ID of the recipient
+ * @body {number} body.recipientId - ID of the recipient
  * @returns {201} FriendRequest created
  * @returns {400} Missing or invalid input
  * @returns {409} Duplicate request or already friends
@@ -94,4 +94,54 @@ export const POST = withAuth(async (request: Request) => {
 
   console.log("Created friend request", newFriendRequest);
   return NextResponse.json(newFriendRequest, { status: 201 });
+});
+
+/**
+ * @route GET /api/friend-request?recipientId={userId}
+ * @description Get all friend requests where the given user is the recipient
+ * @returns {200} OK
+ * @returns {400} Missing or invalid input
+ * @returns {401} Unathorized - recipientId not equal to userId
+ * @returns {404} Not Found - User with recipientId not found
+ */
+export const GET = withAuth(async (request: Request, _, uid: string) => {
+  const url = new URL(request.url);
+  const recipientIdParam = url.searchParams.get("recipientId");
+
+  if (!recipientIdParam) {
+    return NextResponse.json(
+      { error: "Recipient ID is required" },
+      { status: 400 }
+    );
+  }
+
+  if (isNaN(Number(recipientIdParam))) {
+    return NextResponse.json(
+      { error: "Invalid recipient ID" },
+      { status: 400 }
+    );
+  }
+
+  const recipientId = Number(recipientIdParam);
+
+  const recipientUser = await prisma.user.findUnique({
+    where: { id: recipientId },
+  });
+
+  if (!recipientUser) {
+    return NextResponse.json({ error: "Recipient not found" }, { status: 404 });
+  }
+
+  if (recipientUser.firebaseUid !== uid) {
+    return NextResponse.json(
+      { error: "Unathorized to view recipient ID friend requests" },
+      { status: 401 }
+    );
+  }
+
+  const friendRequests = await prisma.friendRequest.findMany({
+    where: { recipientId },
+  });
+
+  return NextResponse.json(friendRequests);
 });

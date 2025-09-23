@@ -4,7 +4,7 @@ import prisma from "../../../../../../prisma/client";
 
 // GET user/[id]/friends
 // Gets the given user's friends list
-export const GET = withAuth(async (req: Request, { params }) => {
+export const GET = withAuth(async (_: Request, { params }) => {
   const { id } = await params;
 
   const idNum = Number(id);
