@@ -1,5 +1,6 @@
 "use client";
 import { Card, Tabs } from "@mantine/core";
+import AddFriendTab from "./AddFriendTab";
 
 export default function Friends() {
   return (
@@ -24,7 +25,7 @@ export default function Friends() {
           <h1>Your friends will appear here.</h1>
         </Tabs.Panel>
         <Tabs.Panel value="add">
-          <div>Add a new friend here.</div>
+          <AddFriendTab />
         </Tabs.Panel>
         <Tabs.Panel value="pending">
           <div>Pending friend requests will show here.</div>

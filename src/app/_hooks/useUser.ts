@@ -57,7 +57,29 @@ const useUser = () => {
     }
   };
 
-  return { createUser, getAllUsers, getUserByUid, getUserById, updateUser };
+  const searchUsers = async (requestBody: {
+    query: string;
+    idToken: string;
+  }) => {
+    const res = await fetch(`/api/user/search?query=${requestBody.query}`, {
+      headers: {
+        Authorization: `Bearer ${requestBody.idToken}`,
+      },
+    });
+    if (res.ok) {
+      const users = await res.json();
+      return users;
+    }
+  };
+
+  return {
+    createUser,
+    getAllUsers,
+    getUserByUid,
+    getUserById,
+    updateUser,
+    searchUsers,
+  };
 };
 
 export default useUser;
