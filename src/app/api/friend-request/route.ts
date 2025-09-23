@@ -6,7 +6,7 @@ import prisma from "../../../../prisma/client";
  * @route POST /api/friend-request
  * @description Create a new friend request with a given sender and recipient
  * @body {number} body.senderId - ID of the sender
- * @body {number} body.recipientㅑd - ID of the recipient
+ * @body {number} body.recipientId - ID of the recipient
  * @returns {201} FriendRequest created
  * @returns {400} Missing or invalid input
  * @returns {409} Duplicate request or already friends
@@ -94,4 +94,67 @@ export const POST = withAuth(async (request: Request) => {
 
   console.log("Created friend request", newFriendRequest);
   return NextResponse.json(newFriendRequest, { status: 201 });
+});
+
+/**
+ * @route GET /api/friend-request?recipientId|senderId={userId}
+ * @description Get all friend requests where the given user is the recipient or sender
+ * @returns {200} OK
+ * @returns {400} Missing or invalid input
+ * @returns {401} Unathorized - recipient/senderId not equal to userId
+ * @returns {404} Not Found - User with recipien/sendertId not found
+ */
+export const GET = withAuth(async (request: Request, _, uid: string) => {
+  const url = new URL(request.url);
+  const recipientIdParam = url.searchParams.get("recipientId");
+  const senderIdParam = url.searchParams.get("senderId");
+
+  if (!recipientIdParam && !senderIdParam) {
+    return NextResponse.json(
+      { error: "Recipient or sender ID is required" },
+      { status: 400 }
+    );
+  }
+
+  if (recipientIdParam && isNaN(Number(recipientIdParam))) {
+    return NextResponse.json(
+      { error: "Invalid recipient ID" },
+      { status: 400 }
+    );
+  }
+  if (senderIdParam && isNaN(Number(senderIdParam))) {
+    return NextResponse.json({ error: "Invalid sender ID" }, { status: 400 });
+  }
+
+  const id = recipientIdParam
+    ? Number(recipientIdParam)
+    : Number(senderIdParam);
+
+  const recipientUser = await prisma.user.findUnique({
+    where: { id },
+  });
+
+  if (!recipientUser) {
+    return NextResponse.json(
+      { error: "Recipient/sender not found" },
+      { status: 404 }
+    );
+  }
+
+  if (recipientUser.firebaseUid !== uid) {
+    return NextResponse.json({ error: "Unathorized" }, { status: 401 });
+  }
+
+  let friendRequests;
+  if (recipientIdParam) {
+    friendRequests = await prisma.friendRequest.findMany({
+      where: { recipientId: id },
+    });
+  } else {
+    friendRequests = await prisma.friendRequest.findMany({
+      where: { senderId: id },
+    });
+  }
+
+  return NextResponse.json(friendRequests);
 });
