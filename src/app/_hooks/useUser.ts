@@ -72,6 +72,21 @@ const useUser = () => {
     }
   };
 
+  const getUserFriends = async (requestBody: {
+    id: number;
+    idToken: string;
+  }) => {
+    const res = await fetch(`/api/user/${requestBody.id}/friends`, {
+      headers: {
+        Authorization: `Bearer ${requestBody.idToken}`,
+      },
+    });
+    if (res.ok) {
+      const friends = await res.json();
+      return friends;
+    }
+  };
+
   return {
     createUser,
     getAllUsers,
@@ -79,6 +94,7 @@ const useUser = () => {
     getUserById,
     updateUser,
     searchUsers,
+    getUserFriends,
   };
 };
 

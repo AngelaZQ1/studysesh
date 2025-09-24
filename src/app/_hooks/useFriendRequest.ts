@@ -15,8 +15,26 @@ const useFriendRequest = () => {
     return friendRequest;
   };
 
+  const getUserFriendRequests = async (requestBody: {
+    userId: number;
+    idToken: string;
+  }) => {
+    const res = await fetch(
+      `/api/friend-request?userId=${requestBody.userId}`,
+      {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${requestBody.idToken}`,
+        },
+      }
+    );
+    const friendRequests = await res.json();
+    return friendRequests;
+  };
+
   return {
     createFriendRequest,
+    getUserFriendRequests,
   };
 };
 
