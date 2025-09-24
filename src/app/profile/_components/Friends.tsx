@@ -71,7 +71,11 @@ export default function Friends() {
           <h1>Your friends will appear here.</h1>
         </Tabs.Panel>
         <Tabs.Panel value="add">
-          <AddFriendTab friends={friends} friendRequests={friendRequests} />
+          <AddFriendTab
+            friends={friends}
+            friendRequests={friendRequests}
+            setFriendRequests={setFriendRequests}
+          />
         </Tabs.Panel>
         <Tabs.Panel value="pending">
           <div>Pending friend requests will show here.</div>

@@ -12,7 +12,7 @@ import {
   Text,
   TextInput,
 } from "@mantine/core";
-import { useEffect, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { FriendRequests } from "./Friends";
 
 interface SearchResult {
@@ -29,11 +29,13 @@ interface User {
 interface AddFriendTabProps {
   friends: User[] | null;
   friendRequests: FriendRequests | null;
+  setFriendRequests: Dispatch<SetStateAction<FriendRequests | null>>;
 }
 
 export default function AddFriendTab({
   friends,
   friendRequests,
+  setFriendRequests,
 }: AddFriendTabProps) {
   const { firebaseUser, user } = useUserContext();
   const { searchUsers } = useUser();
@@ -51,6 +53,9 @@ export default function AddFriendTab({
         idToken,
       });
 
+      // remove current user
+      result.users = result.users.filter((u: User) => u.id !== user.id);
+
       // exclude current friends
       if (friends && friends.length > 0) {
         result.users = result.users.filter((user: User) =>
@@ -64,11 +69,16 @@ export default function AddFriendTab({
 
   const handleAdd = async (otherUserId: number) => {
     const idToken = await firebaseUser.getIdToken();
-    await createFriendRequest({
+    const newFriendRequest = await createFriendRequest({
       senderId: user.id,
       recipientId: otherUserId,
       idToken,
     });
+    setFriendRequests((prev) =>
+      prev
+        ? { ...prev, sent: [...prev.sent, newFriendRequest] }
+        : { sent: [newFriendRequest], received: [] }
+    );
   };
 
   // returns true if there is a friend request between the current user
