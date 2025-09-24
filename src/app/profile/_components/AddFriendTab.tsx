@@ -13,6 +13,7 @@ import {
   TextInput,
 } from "@mantine/core";
 import { useEffect, useState } from "react";
+import { FriendRequests } from "./Friends";
 
 interface SearchResult {
   users: User[];
@@ -25,7 +26,15 @@ interface User {
   lastName: string;
 }
 
-export default function AddFriendTab() {
+interface AddFriendTabProps {
+  friends: User[] | null;
+  friendRequests: FriendRequests | null;
+}
+
+export default function AddFriendTab({
+  friends,
+  friendRequests,
+}: AddFriendTabProps) {
   const { firebaseUser, user } = useUserContext();
   const { searchUsers } = useUser();
   const { createFriendRequest } = useFriendRequest();
@@ -41,6 +50,13 @@ export default function AddFriendTab() {
         query: search,
         idToken,
       });
+
+      // exclude current friends
+      if (friends && friends.length > 0) {
+        result.users = result.users.filter((user: User) =>
+          friends.find((f) => f.id !== user.id)
+        );
+      }
       setSearchResult(result);
     }, 300);
     return () => clearTimeout(timer);
@@ -53,6 +69,16 @@ export default function AddFriendTab() {
       recipientId: otherUserId,
       idToken,
     });
+  };
+
+  // returns true if there is a friend request between the current user
+  // and the given userId
+  const friendRequestExists = (userId: number) => {
+    const received = friendRequests?.received.find(
+      (req) => req.senderId === userId
+    );
+    const sent = friendRequests?.sent.find((req) => req.recipientId === userId);
+    return received || sent;
   };
 
   return (
@@ -74,7 +100,7 @@ export default function AddFriendTab() {
           {searchResult.users.map((user: User) => (
             <Card
               key={user.id}
-              bg="gray.1"
+              bg="gray.0"
               p="sm"
               mb="8"
               withBorder
@@ -93,17 +119,29 @@ export default function AddFriendTab() {
                   ></Avatar>
                   <Text size="sm">{user.firstName + " " + user.lastName}</Text>
                 </Group>
-                <Button
-                  size="xs"
-                  variant="default"
-                  px="xs"
-                  onClick={() => handleAdd(user.id)}
-                >
-                  <Group gap="4" mt="2">
-                    <UserPlusIcon className="size-4" />
-                    Add
-                  </Group>
-                </Button>
+                {friendRequestExists(user.id) ? (
+                  <Button
+                    size="xs"
+                    variant="default"
+                    px="xs"
+                    style={{ border: "1px solid rgb(222, 226, 230)" }}
+                    disabled
+                  >
+                    Pending
+                  </Button>
+                ) : (
+                  <Button
+                    size="xs"
+                    variant="default"
+                    px="xs"
+                    onClick={() => handleAdd(user.id)}
+                  >
+                    <Group gap="4" mt="2">
+                      <UserPlusIcon className="size-4" />
+                      Add
+                    </Group>
+                  </Button>
+                )}
               </Group>
             </Card>
           ))}

@@ -2,8 +2,14 @@ import { withAuth } from "@/app/lib/withAuth";
 import { NextResponse } from "next/server";
 import prisma from "../../../../../../prisma/client";
 
-// GET user/[id]/friends
-// Gets the given user's friends list
+/**
+ * @route GET user/[id]/friends
+ * @description Gets the given user's friends list
+ * @path {string} id - ID of the user
+ * @returns {200} OK - User[]
+ * @returns {400} Missing or invalid input
+ * @returns {404} User not found
+ */
 export const GET = withAuth(async (_: Request, { params }) => {
   const { id } = await params;
 
