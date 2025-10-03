@@ -31,6 +31,16 @@ const theme = createTheme({
         },
       },
     },
+    DatePicker: {
+      styles: {
+        day: {
+          "&[data-selected]": {
+            backgroundColor: "#FC6288",
+            color: "white",
+          },
+        },
+      },
+    },
   },
 });
 
