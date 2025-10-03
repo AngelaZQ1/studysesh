@@ -1,14 +1,13 @@
 "use client";
 
-import React, { useState } from "react";
+import useUserContext from "@/app/_hooks/useUserContext";
 import { Sesh } from "@/app/_types/types";
 import moment from "moment";
+import { useState } from "react";
 import { Calendar, momentLocalizer, View } from "react-big-calendar";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import { useSelector } from "react-redux";
 import EventComponent from "./EventComponent";
-import useUserContext from "@/app/_hooks/useUserContext";
-import user from "pusher-js/types/src/core/user";
 
 interface SeshCalendarProps {
   handleEdit: (sesh: Sesh) => void;
