@@ -20,8 +20,9 @@ model User {
   sentFriendRequests     FriendRequest[] @relation("SentFriendRequests")
   receivedFriendRequests FriendRequest[] @relation("ReceivedFriendRequests")
 
-  seshes              Sesh[]
+  seshes              Sesh[] @relation("SeshOwner")
   seshesAsParticipant Sesh[] @relation("SeshParticipants")
+  uploadedFiles       File[] @relation("FileUploader")
 }
 
 model Sesh {
@@ -32,8 +33,9 @@ model Sesh {
   location     String?
   virtual      Boolean
   ownerId      Int
-  owner        User     @relation(fields: [ownerId], references: [id])
+  owner        User     @relation("SeshOwner", fields: [ownerId], references: [id])
   participants User[]   @relation("SeshParticipants")
+  files        File[]   @relation("SeshFiles")
 }
 
 model FriendRequest {
@@ -42,4 +44,21 @@ model FriendRequest {
   senderId    Int
   recipient   User @relation("ReceivedFriendRequests", fields: [recipientId], references: [id])
   recipientId Int
+}
+
+model File {
+  id         Int      @id @default(autoincrement())
+  filename   String
+  fileUrl    String // URL to the S3 file
+  fileType   String // MIME type
+  fileSize   Int // In bytes
+  uploadedAt DateTime @default(now())
+
+  seshId       Int
+  sesh         Sesh @relation("SeshFiles", fields: [seshId], references: [id], onDelete: Cascade)
+  uploadedBy   User @relation("FileUploader", fields: [uploadedById], references: [id])
+  uploadedById Int
+
+  @@index([seshId])
+  @@index([uploadedById])
 }
