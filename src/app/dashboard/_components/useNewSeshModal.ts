@@ -196,6 +196,7 @@ const useNewSeshModal = ({ onSubmit, seshToEdit }: NewSeshModalProps) => {
       location,
       virtual,
       participantIds: values.participantIds.map((id) => Number(id)),
+      files: null,
     };
 
     return requestBody;

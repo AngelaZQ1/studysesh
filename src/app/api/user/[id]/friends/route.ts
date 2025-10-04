@@ -10,7 +10,7 @@ import prisma from "../../../../../../prisma/client";
  * @returns {400} Missing or invalid input
  * @returns {404} User not found
  */
-export const GET = withAuth(async (_: Request, { params }) => {
+export const GET = withAuth(async (req: Request, uid, { params }) => {
   const { id } = await params;
 
   const idNum = Number(id);

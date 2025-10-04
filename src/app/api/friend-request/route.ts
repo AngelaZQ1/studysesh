@@ -104,7 +104,7 @@ export const POST = withAuth(async (request: Request) => {
  * @returns {401} Unathorized - Given user's firebase UID doesnt match UID in auth token
  * @returns {404} Not Found - User not found
  */
-export const GET = withAuth(async (request: Request, _, uid: string) => {
+export const GET = withAuth(async (request: Request, uid: string) => {
   const url = new URL(request.url);
   const userIdParam = url.searchParams.get("userId");
 

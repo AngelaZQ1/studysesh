@@ -5,8 +5,8 @@ import { authAdmin } from "../../../firebaseAdmin";
 export function withAuth<
   T extends (
     req: Request,
-    context: { params: Record<string, string> },
-    uid: string
+    uid: string,
+    context: { params: Record<string, string> }
   ) => Promise<Response> | Response
 >(handler: T) {
   return async (req: Request, context: { params: Record<string, string> }) => {
@@ -19,7 +19,7 @@ export function withAuth<
 
     try {
       const decodedToken = await authAdmin.verifyIdToken(token);
-      return handler(req, context, decodedToken.uid);
+      return handler(req, decodedToken.uid, context);
     } catch (err) {
       console.error("Auth failed:", err);
       return NextResponse.json({ error: "Invalid token" }, { status: 401 });

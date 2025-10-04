@@ -8,7 +8,7 @@ export const GET = withAuth(async (request: Request) => {
   const { searchParams } = new URL(request.url);
   const query = searchParams.get("query");
 
-  let users = [];
+  let users: { id: number; firstName: string; lastName: string }[] = [];
   if (!query) {
     return NextResponse.json({ users, total_results: 0 });
   }
