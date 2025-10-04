@@ -48,20 +48,19 @@ const useNewSeshModal = ({ onSubmit, seshToEdit }: NewSeshModalProps) => {
     }
   }, [seshToEdit]);
 
-  // title, date, location are required
   // if location is inPerson, locationString is required
   const form = useForm<{
-    title: string;
-    date: Date;
-    time?: string;
+    title: string; // required
+    date: Date; // required
+    time: string; // required
     locationString: string;
-    location: "virtual" | "inPerson";
+    location: "virtual" | "inPerson"; // required
     participantIds: string[];
   }>({
     initialValues: {
       title: "",
       date: new Date(),
-      time: undefined,
+      time: "",
       locationString: "",
       location: "virtual",
       participantIds: [],
@@ -70,7 +69,7 @@ const useNewSeshModal = ({ onSubmit, seshToEdit }: NewSeshModalProps) => {
       title: (value) =>
         value.trim().length === 0 ? "Title is required" : null,
       date: (value) => (!value ? "Date is required" : null),
-      time: (value) => (!value ? "Time is required" : null),
+      time: (value) => (value.trim().length === 0 ? "Time is required" : null),
       locationString: (value): string | null =>
         form.getValues().location === "inPerson" && value.trim().length === 0
           ? "Location cannot be empty"
