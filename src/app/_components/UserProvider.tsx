@@ -14,6 +14,8 @@ interface UserProviderProps {
   children: React.ReactNode;
 }
 
+const routesWithoutNav = ["/signup", "/login"];
+
 // Component to handle authentication including fetching the Firebase User and redirecting to the dashboard or login pages
 // Displays a loading screen if Firebase User or User are null before setting user context values
 export default function UserProvider({ children }: UserProviderProps) {
@@ -21,7 +23,6 @@ export default function UserProvider({ children }: UserProviderProps) {
   const router = useRouter();
   const pathname = usePathname();
   const dispatch = useDispatch();
-  const routesWithoutNav = ["/signup", "/login"];
 
   const [firebaseUser, setFirebaseUserState] = useState<FirebaseUser | null>(
     null
@@ -78,9 +79,9 @@ export default function UserProvider({ children }: UserProviderProps) {
   return (
     <UserContext.Provider
       value={{
-        firebaseUser,
+        firebaseUser: firebaseUser!,
         setFirebaseUser: setFirebaseUserState,
-        user: user as User,
+        user: user!,
         setUser: setUser as React.Dispatch<React.SetStateAction<User | null>>,
       }}
     >

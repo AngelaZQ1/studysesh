@@ -17,6 +17,7 @@ import {
 } from "@mantine/core";
 import { DatePicker, TimeInput } from "@mantine/dates";
 import { notifications } from "@mantine/notifications";
+import { useState } from "react";
 import { FiMapPin } from "react-icons/fi";
 import { LuCalendarX2 } from "react-icons/lu";
 
@@ -45,13 +46,16 @@ export default function NewSeshModal({
     onSubmit,
     seshToEdit,
   });
+  const [submitButtonLoading, setSubmitButtonLoading] = useState(false);
 
   const handleFormSubmit = async (values: typeof form.values) => {
+    setSubmitButtonLoading(true);
     if (seshToEdit) {
       await handleFormUpdate();
     } else {
       await handleSubmit(values);
     }
+    setSubmitButtonLoading(false);
   };
 
   const handleFormUpdate = async () => {
@@ -222,23 +226,14 @@ export default function NewSeshModal({
             <Button variant="white" c="gray.7" onClick={handleClose}>
               Cancel
             </Button>
-            {seshToEdit ? (
-              <Button
-                type="submit"
-                variant="gradient"
-                gradient={{ from: "#FF9C67", to: "#FC6288", deg: 115 }}
-              >
-                Update Sesh
-              </Button>
-            ) : (
-              <Button
-                type="submit"
-                variant="gradient"
-                gradient={{ from: "#FF9C67", to: "#FC6288", deg: 115 }}
-              >
-                Plan Sesh
-              </Button>
-            )}
+            <Button
+              type="submit"
+              loading={submitButtonLoading}
+              variant="gradient"
+              gradient={{ from: "#FF9C67", to: "#FC6288", deg: 115 }}
+            >
+              {seshToEdit ? "Update Sesh" : "Plan Sesh"}
+            </Button>
           </Flex>
         </Flex>
       </form>
