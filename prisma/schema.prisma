@@ -48,10 +48,10 @@ model FriendRequest {
 
 model File {
   id         Int      @id @default(autoincrement())
-  filename   String
-  fileUrl    String // URL to the S3 file
-  fileType   String // MIME type
-  fileSize   Int // In bytes
+  filename   String   // Original file name
+  s3Key      String
+  fileType   String   // MIME type
+  fileSize   Int      // In bytes
   uploadedAt DateTime @default(now())
 
   seshId       Int
